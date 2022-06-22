@@ -8,12 +8,12 @@ import os
 import sys
 import logging
 from flask import Flask, jsonify, request, url_for, make_response, abort
-from .utils import status  # HTTP Status Codes
+from service.utils import status  # HTTP Status Codes
 
 # For this example we'll use SQLAlchemy, a popular ORM that supports a
 # variety of backends including SQLite, MySQL, and PostgreSQL
 from flask_sqlalchemy import SQLAlchemy
-from service.models import YourResourceModel, DataValidationError
+from service.models import Wishlist, DataValidationError
 
 # Import Flask application
 from . import app
@@ -24,8 +24,12 @@ from . import app
 @app.route("/")
 def index():
     """ Root URL response """
+    app.logger.info("Request for Root URL")
     return (
-        "Reminder: return some useful information in json format about the service here",
+        jsonify(
+            name="Wishlist Demo REST API Service",
+            version="1.0",
+        ),
         status.HTTP_200_OK,
     )
 
@@ -38,4 +42,4 @@ def index():
 def init_db():
     """ Initializes the SQLAlchemy app """
     global app
-    YourResourceModel.init_db(app)
+    Wishlist.init_db(app)

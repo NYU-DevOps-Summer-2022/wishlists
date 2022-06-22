@@ -9,34 +9,47 @@ import os
 import logging
 from unittest import TestCase
 from unittest.mock import MagicMock, patch
+from urllib.parse import quote_plus
 from service import app
-from service.models import db
+from service.models import db, init_db, Wishlist
 from service.utils import status  # HTTP Status Codes
 
+DATABASE_URI = os.getenv(
+    "DATABASE_URI", "postgresql://postgres:postgres@localhost:5432/testdb"
+)
+BASE_URL = "/wishlist"
+CONTENT_TYPE_JSON = "application/json"
 
 ######################################################################
 #  T E S T   C A S E S
 ######################################################################
-class TestYourResourceServer(TestCase):
+class TestWishlistServer(TestCase):
     """ REST API Server Tests """
 
     @classmethod
     def setUpClass(cls):
         """ This runs once before the entire test suite """
-        pass
+        app.config["TESTING"] = True
+        app.config["DEBUG"] = False
+        # Set up the test database
+        app.config["SQLALCHEMY_DATABASE_URI"] = DATABASE_URI
+        app.logger.setLevel(logging.CRITICAL)
+        init_db(app)
 
     @classmethod
     def tearDownClass(cls):
         """ This runs once after the entire test suite """
-        pass
+        db.session.close()
 
     def setUp(self):
         """ This runs before each test """
         self.app = app.test_client()
+        db.session.query(Wishlist).delete()  # clean up the last tests
+        db.session.commit()
 
     def tearDown(self):
         """ This runs after each test """
-        pass
+        db.session.remove()
 
     ######################################################################
     #  P L A C E   T E S T   C A S E S   H E R E
@@ -46,3 +59,5 @@ class TestYourResourceServer(TestCase):
         """ It should call the home page """
         resp = self.app.get("/")
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
+        data = resp.get_json()
+        self.assertEqual(data["name"], "Wishlist Demo REST API Service")

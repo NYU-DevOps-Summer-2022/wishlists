@@ -36,6 +36,41 @@ def index():
         status.HTTP_200_OK,
     )
 
+######################################################################
+# LIST ALL WISHLISTS
+######################################################################
+@app.route("/wishlists", methods=["GET"])
+def list_wishlists():
+    """Returns all of the Wishlists"""
+    app.logger.info("Request for the list of wishlists")
+    wishlists = []
+    name = request.args.get("name")
+    if name:
+        wishlists = Wishlist.find_by_name(name)
+    else:
+        wishlists = Wishlist.all()
+
+    results = [wishlist.serialize() for wishlist in wishlists]
+    app.logger.info("Returning %d wishlists", len(results))
+    return jsonify(results), status.HTTP_200_OK
+
+######################################################################
+# RETRIEVE A WISHLIST
+######################################################################
+@app.route("/wishlists/<int:wishlist_id>", methods=["GET"])
+def get_wishlists(wishlist_id):
+    """
+    Retrieve a single Wishlist
+
+    This endpoint will return a Wishlist based on it's id
+    """
+    app.logger.info("Request for wishlist with id: %s", wishlist_id)
+    wishlist = Wishlist.find(wishlist_id)
+    if not wishlist:
+        abort(status.HTTP_404_NOT_FOUND, f"Wishlist with id '{wishlist_id}' was not found.")
+
+    app.logger.info("Returning wishlist: %s", wishlist.name)
+    return jsonify(wishlist.serialize()), status.HTTP_200_OK
 
 ######################################################################
 # ADD A NEW WISHLIST
@@ -52,7 +87,7 @@ def create_wishlists():
     wishlist.deserialize(request.get_json())
     wishlist.create()
     message = wishlist.serialize()
-    location_url = url_for("create_wishlists", wishlist_id=wishlist.id, _external=True)
+    location_url = url_for("get_wishlists", wishlist_id=wishlist.id, _external=True)
 
     app.logger.info("Wishlist with ID [%s] created.", wishlist.id)
     return jsonify(message), status.HTTP_201_CREATED, {"Location": location_url}

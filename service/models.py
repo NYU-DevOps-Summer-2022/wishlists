@@ -17,7 +17,6 @@ def init_db(app):
     """Initialize the SQLAlchemy app"""
     Wishlist.init_db(app)
 
-
 class DataValidationError(Exception):
     """ Used for an data validation errors when deserializing """
 
@@ -66,9 +65,13 @@ class Wishlist(db.Model):
         db.session.delete(self)
         db.session.commit()
 
-    def serialize(self) -> dict:
+    def serialize(self):
         """ Serializes a Wishlist into a dictionary """
-        return {"id": self.id, "name": self.name, "available": self.available,}
+        return {
+            "id": self.id, 
+            "name": self.name,
+            "available": self.available,
+        }
 
     def deserialize(self, data):
         """
@@ -86,6 +89,10 @@ class Wishlist(db.Model):
                     "Invalid type for boolean [available]: "
                     + str(type(data["available"]))
                 )
+        except AttributeError as error:
+            raise DataValidationError(
+                "Invalid attribute: " + error.args[0]
+            )
         except KeyError as error:
             raise DataValidationError(
                 "Invalid Wishlist: missing " + error.args[0]
@@ -132,7 +139,7 @@ class Wishlist(db.Model):
         return cls.query.all()
 
     @classmethod
-    def find(cls, by_id):
+    def find(cls, by_id: int):
         """ Finds a Wishlist by it's ID """
         logger.info("Processing lookup for id %s ...", by_id)
         return cls.query.get(by_id)

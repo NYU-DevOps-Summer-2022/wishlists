@@ -8,9 +8,8 @@ Test cases can be run with the following:
 import os
 import logging
 from unittest import TestCase
-
+from unittest.mock import MagicMock, patch
 from urllib.parse import quote_plus
-# from unittest.mock import MagicMock, patch
 from service import app
 from service.models import db, init_db, Wishlist
 from service.utils import status  # HTTP Status Codes
@@ -22,12 +21,17 @@ DATABASE_URI = os.getenv(
 BASE_URL = "/wishlists"
 CONTENT_TYPE_JSON = "application/json"
 
+DATABASE_URI = os.getenv(
+    "DATABASE_URI", "postgresql://postgres:postgres@localhost:5432/testdb"
+)
+BASE_URL = "/wishlist"
+CONTENT_TYPE_JSON = "application/json"
 
 ######################################################################
 #  T E S T   W I S H L I S T   S E R V I C E
 ######################################################################
-class TestWishlistService(TestCase):
-    """ Wishlist Server Tests """
+class TestWishlistServer(TestCase):
+    """ REST API Server Tests """
 
     @classmethod
     def setUpClass(cls):
@@ -46,7 +50,7 @@ class TestWishlistService(TestCase):
 
     def setUp(self):
         """ This runs before each test """
-        self.client = app.test_client()
+        self.app = app.test_client()
         db.session.query(Wishlist).delete()  # clean up the last tests
         db.session.commit()
 
@@ -59,7 +63,7 @@ class TestWishlistService(TestCase):
         wishlists = []
         for _ in range(count):
             test_wishlist = WishlistFactory()
-            response = self.client.post(
+            response = self.app.post(
                 BASE_URL, json=test_wishlist.serialize(), content_type=CONTENT_TYPE_JSON
             )
             self.assertEqual(
@@ -76,41 +80,33 @@ class TestWishlistService(TestCase):
 
     def test_index(self):
         """ It should call the home page """
-        response = self.client.get("/")
+        response = self.app.get("/")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         data = response.get_json()
         self.assertEqual(data["name"], "Wishlist Demo REST API Service")
 
- #   def test_get_wishlist(self):
- #       """It should Get a single Wishlist"""
- #       # get the id of a wishlist
- #       test_wishlist = self._create_wishlists(1)[0]
- #       response = self.client.get(f"{BASE_URL}/{test_wishlist.id}")
- #       self.assertEqual(response.status_code, status.HTTP_200_OK)
- #       data = response.get_json()
- #       self.assertEqual(data["name"], test_wishlist.name)
 
-    def test_create_wishlist(self):
-        """It should Create a new Wishlist"""
-        test_wishlist = WishlistFactory()
-        logging.debug("Test Wishlist: %s", test_wishlist.serialize())
-        response = self.client.post(
-            BASE_URL, json=test_wishlist.serialize(), content_type=CONTENT_TYPE_JSON
-        )
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+    # def test_create_wishlist(self):
+    #     """It should Create a new Wishlist"""
+    #     test_wishlist = WishlistFactory()
+    #     logging.debug("Test Wishlist: %s", test_wishlist.serialize())
+    #     response = self.app.post(
+    #         BASE_URL, json=test_wishlist.serialize(), content_type=CONTENT_TYPE_JSON
+    #     )
+    #     self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
-        # Make sure location header is set
-        location = response.headers.get("Location", None)
-        self.assertIsNotNone(location)
+    #     # Make sure location header is set
+    #     location = response.headers.get("Location", None)
+    #     self.assertIsNotNone(location)
 
-        # Check the data is correct
-        new_wishlist = response.get_json()
-        self.assertEqual(new_wishlist["name"], test_wishlist.name)
-        self.assertEqual(new_wishlist["available"], test_wishlist.available)
+    #     # Check the data is correct
+    #     new_wishlist = response.get_json()
+    #     self.assertEqual(new_wishlist["name"], test_wishlist.name)
+    #     self.assertEqual(new_wishlist["available"], test_wishlist.available)
 
-        # Check that the location header was correct
-        # response = self.client.get(location, content_type=CONTENT_TYPE_JSON)
-        # self.assertEqual(response.status_code, status.HTTP_200_OK)
-        new_wishlist = response.get_json()
-        self.assertEqual(new_wishlist["name"], test_wishlist.name)
-        self.assertEqual(new_wishlist["available"], test_wishlist.available)
+    #     # Check that the location header was correct
+    #     response = self.app.get(location, content_type=CONTENT_TYPE_JSON)
+    #     self.assertEqual(response.status_code, status.HTTP_200_OK)
+    #     new_wishlist = response.get_json()
+    #     self.assertEqual(new_wishlist["name"], test_wishlist.name)
+    #     self.assertEqual(new_wishlist["available"], test_wishlist.available)

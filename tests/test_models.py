@@ -5,6 +5,7 @@ Test cases for Wishlist Model
 import os
 import logging
 import unittest
+from werkzeug.exceptions import NotFound
 from service.models import Wishlist, DataValidationError, db
 from service import app
 from tests.factories import WishlistFactory

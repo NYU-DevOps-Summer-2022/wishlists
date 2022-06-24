@@ -87,6 +87,14 @@ class TestWishlistServer(TestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         data = response.get_json()
         self.assertEqual(data["name"], test_wishlist.name)
+    
+    def test_get_wishlist_not_found(self):
+        """It should not Get a wishlist thats not found"""
+        response = self.app.get(f"{BASE_URL}/0")
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        data = response.get_json()
+        logging.debug("Response data = %s", data)
+        self.assertIn("was not found", data["message"])
 
     def test_create_wishlist(self):
         """It should Create a new Wishlist"""
@@ -113,3 +121,16 @@ class TestWishlistServer(TestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         new_wishlist = response.get_json()
         self.assertEqual(new_wishlist["name"], test_wishlist.name)
+
+    # def test_query_wishlist_list_by_customer_id(self):
+    #     """It should Query Wishlists by Customer_ID"""
+    #     wishlists = self._create_wishlists(10)
+    #     test_customer_id = wishlists[0].customer_id
+    #     customer_id_wishlists = [wishlist for wishlist in wishlists if wishlist.customer_id == test_customer_id]
+    #     response = self.app.get(f"/wishlists?customer_id={test_customer_id}")
+    #     self.assertEqual(response.status_code, status.HTTP_200_OK)
+    #     data = response.get_json()
+    #     self.assertEqual(len(data), len(customer_id_wishlists))
+    #     # check the data just to be sure
+    #     for wishlist in data:
+    #         self.assertEqual(wishlist["customer_id"], test_customer_id)

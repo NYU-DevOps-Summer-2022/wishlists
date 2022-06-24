@@ -49,11 +49,33 @@ class TestWishlist(unittest.TestCase):
 
     def test_create_a_wishlist(self):
         """It should Create a wishlist and assert that it exists"""
-        wishlist = Wishlist(name="AccessoriesList", available=True)
+        wishlist = Wishlist(name="AccessoriesList")
         self.assertEqual(str(wishlist), "<Wishlist 'AccessoriesList' id=[None]>")
         self.assertTrue(wishlist is not None)
         self.assertEqual(wishlist.id, None)
         self.assertEqual(wishlist.name, "AccessoriesList")
-        self.assertEqual(wishlist.available, True)
-        wishlist = Wishlist(name="AccessoriesList", available=False)
-        self.assertEqual(wishlist.available, False)
+    
+    def test_add_a_wishlist(self):
+        """It should Create a wishlist and add it to the database"""
+        wishlists = Wishlist.all()
+        self.assertEqual(wishlists, [])
+        wishlist = Wishlist(name="Summer")
+        self.assertTrue(wishlist is not None)
+        self.assertEqual(wishlist.id, None)
+        wishlist.create()
+        # Assert that it was assigned an id and shows up in the database
+        self.assertIsNotNone(wishlist.id)
+        wishlists = Wishlist.all()
+        self.assertEqual(len(wishlists), 1)
+
+    def test_read_a_wishlist(self):
+        """It should Read a Wishlist"""
+        wishlist = WishlistFactory()
+        logging.debug(wishlist)
+        wishlist.id = None
+        wishlist.create()
+        self.assertIsNotNone(wishlist.id)
+        # Fetch it back
+        found_wishlist = Wishlist.find(wishlist.id)
+        self.assertEqual(found_wishlist.id, wishlist.id)
+        self.assertEqual(found_wishlist.name, wishlist.name)

@@ -33,8 +33,6 @@ class Wishlist(db.Model):
     # Table Schema
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(63), nullable=False)
-    available = db.Column(db.Boolean(), nullable=False, default=False)
-
 
     ##################################################
     # INSTANCE METHODS
@@ -70,7 +68,6 @@ class Wishlist(db.Model):
         return {
             "id": self.id, 
             "name": self.name,
-            "available": self.available,
         }
 
     def deserialize(self, data):
@@ -82,25 +79,12 @@ class Wishlist(db.Model):
         """
         try:
             self.name = data["name"]
-            if isinstance(data["available"], bool):
-                self.available = data["available"]
-            else:
-                raise DataValidationError(
-                    "Invalid type for boolean [available]: "
-                    + str(type(data["available"]))
-                )
         except AttributeError as error:
-            raise DataValidationError(
-                "Invalid attribute: " + error.args[0]
-            )
+            raise DataValidationError("Invalid attribute: " + error.args[0])
         except KeyError as error:
-            raise DataValidationError(
-                "Invalid Wishlist: missing " + error.args[0]
-            )
+            raise DataValidationError("Invalid Wishlist: missing " + error.args[0])
         except TypeError as error:
-            raise DataValidationError(
-                "Invalid Wishlist: body of request contained bad or no data"
-            )
+            raise DataValidationError("Invalid Wishlist: body of request contained bad or no data" + str(error))
         return self
 
     @classmethod
@@ -154,16 +138,3 @@ class Wishlist(db.Model):
         logger.info("Processing name query for %s ...", name)
         return cls.query.filter(cls.name == name)
 
-    @classmethod
-    def find_by_availability(cls, available: bool = True) -> list:
-        """Returns all Wishlists by their availability
-
-        :param available: True for wishlists that are available
-        :type available: str
-
-        :return: a collection of Wishlists that are available
-        :rtype: list
-
-        """
-        logger.info("Processing available query for %s ...", available)
-        return cls.query.filter(cls.available == available)

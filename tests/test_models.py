@@ -8,6 +8,7 @@ import unittest
 from werkzeug.exceptions import NotFound
 from service.models import Wishlist, DataValidationError, db
 from service import app
+from tests.factories import WishlistFactory
 
 DATABASE_URI = os.getenv(
     "DATABASE_URI", "postgresql://postgres:postgres@localhost:5432/testdb"
@@ -46,11 +47,13 @@ class TestWishlist(unittest.TestCase):
     #  T E S T   C A S E S
     ######################################################################
 
-    def test_create_wishlist(self):
-        """ It should create a wishlist and assert that it exists """
-        wishlist = Wishlist(name="Summer")
-        self.assertEqual(str(wishlist), "<Wishlist 'Summer' id=[None]>")
+    def test_create_a_wishlist(self):
+        """It should Create a wishlist and assert that it exists"""
+        wishlist = Wishlist(name="AccessoriesList", available=True)
+        self.assertEqual(str(wishlist), "<Wishlist 'AccessoriesList' id=[None]>")
         self.assertTrue(wishlist is not None)
         self.assertEqual(wishlist.id, None)
-        self.assertEqual(wishlist.name, "Summer")
-        
+        self.assertEqual(wishlist.name, "AccessoriesList")
+        self.assertEqual(wishlist.available, True)
+        wishlist = Wishlist(name="AccessoriesList", available=False)
+        self.assertEqual(wishlist.available, False)

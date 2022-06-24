@@ -1,5 +1,5 @@
 """
-TestYourResourceModel API Service Test Suite
+Test Wishlist API Service Test Suite
 
 Test cases can be run with the following:
   nosetests -v --with-spec --spec-color
@@ -13,6 +13,13 @@ from urllib.parse import quote_plus
 from service import app
 from service.models import db, init_db, Wishlist
 from service.utils import status  # HTTP Status Codes
+from tests.factories import WishlistFactory
+
+DATABASE_URI = os.getenv(
+    "DATABASE_URI", "postgresql://postgres:postgres@localhost:5432/testdb"
+)
+BASE_URL = "/wishlists"
+CONTENT_TYPE_JSON = "application/json"
 
 DATABASE_URI = os.getenv(
     "DATABASE_URI", "postgresql://postgres:postgres@localhost:5432/testdb"
@@ -21,7 +28,7 @@ BASE_URL = "/wishlist"
 CONTENT_TYPE_JSON = "application/json"
 
 ######################################################################
-#  T E S T   C A S E S
+#  T E S T   W I S H L I S T   S E R V I C E
 ######################################################################
 class TestWishlistServer(TestCase):
     """ REST API Server Tests """
@@ -51,13 +58,55 @@ class TestWishlistServer(TestCase):
         """ This runs after each test """
         db.session.remove()
 
+    def _create_wishlists(self, count):
+        """Factory method to create wishlists in bulk"""
+        wishlists = []
+        for _ in range(count):
+            test_wishlist = WishlistFactory()
+            response = self.app.post(
+                BASE_URL, json=test_wishlist.serialize(), content_type=CONTENT_TYPE_JSON
+            )
+            self.assertEqual(
+                response.status_code, status.HTTP_201_CREATED, "Could not create test wishlist"
+            )
+            new_wishlist = response.get_json()
+            test_wishlist.id = new_wishlist["id"]
+            wishlists.append(test_wishlist)
+        return wishlists
+
     ######################################################################
-    #  P L A C E   T E S T   C A S E S   H E R E
+    #  T E S T   C A S E S
     ######################################################################
 
     def test_index(self):
         """ It should call the home page """
-        resp = self.app.get("/")
-        self.assertEqual(resp.status_code, status.HTTP_200_OK)
-        data = resp.get_json()
+        response = self.app.get("/")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = response.get_json()
         self.assertEqual(data["name"], "Wishlist Demo REST API Service")
+
+
+    # def test_create_wishlist(self):
+    #     """It should Create a new Wishlist"""
+    #     test_wishlist = WishlistFactory()
+    #     logging.debug("Test Wishlist: %s", test_wishlist.serialize())
+    #     response = self.app.post(
+    #         BASE_URL, json=test_wishlist.serialize(), content_type=CONTENT_TYPE_JSON
+    #     )
+    #     self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+    #     # Make sure location header is set
+    #     location = response.headers.get("Location", None)
+    #     self.assertIsNotNone(location)
+
+    #     # Check the data is correct
+    #     new_wishlist = response.get_json()
+    #     self.assertEqual(new_wishlist["name"], test_wishlist.name)
+    #     self.assertEqual(new_wishlist["available"], test_wishlist.available)
+
+    #     # Check that the location header was correct
+    #     response = self.app.get(location, content_type=CONTENT_TYPE_JSON)
+    #     self.assertEqual(response.status_code, status.HTTP_200_OK)
+    #     new_wishlist = response.get_json()
+    #     self.assertEqual(new_wishlist["name"], test_wishlist.name)
+    #     self.assertEqual(new_wishlist["available"], test_wishlist.available)

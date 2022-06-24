@@ -4,6 +4,8 @@ Models for Wishlist
 All of the models are stored in this module
 """
 import logging
+from enum import Enum
+from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 
 logger = logging.getLogger("flask.app")
@@ -30,7 +32,13 @@ class Wishlist(db.Model):
 
     # Table Schema
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(63))
+    name = db.Column(db.String(63), nullable=False)
+    available = db.Column(db.Boolean(), nullable=False, default=False)
+
+
+    ##################################################
+    # INSTANCE METHODS
+    ##################################################
 
     def __repr__(self):
         return "<Wishlist %r id=[%s]>" % (self.name, self.id)
@@ -61,7 +69,8 @@ class Wishlist(db.Model):
         """ Serializes a Wishlist into a dictionary """
         return {
             "id": self.id, 
-            "name": self.name
+            "name": self.name,
+            "available": self.available,
         }
 
     def deserialize(self, data):
@@ -73,6 +82,13 @@ class Wishlist(db.Model):
         """
         try:
             self.name = data["name"]
+            if isinstance(data["available"], bool):
+                self.available = data["available"]
+            else:
+                raise DataValidationError(
+                    "Invalid type for boolean [available]: "
+                    + str(type(data["available"]))
+                )
         except AttributeError as error:
             raise DataValidationError(
                 "Invalid attribute: " + error.args[0]
@@ -96,7 +112,26 @@ class Wishlist(db.Model):
         db.init_app(app)
         app.app_context().push()
         db.create_all()  # make our sqlalchemy tables
+    
+    ##################################################
+    # CLASS METHODS
+    ##################################################
 
+    @classmethod
+    def init_db(cls, app: Flask):
+        """Initializes the database session
+
+        :param app: the Flask app
+        :type data: Flask
+
+        """
+        logger.info("Initializing database")
+        # This is where we initialize SQLAlchemy from the Flask app
+        db.init_app(app)
+        app.app_context().push()
+        db.create_all()  # make our sqlalchemy tables
+    
+    
     @classmethod
     def all(cls):
         """ Returns all of the Wishlists in the database """
@@ -118,3 +153,17 @@ class Wishlist(db.Model):
         """
         logger.info("Processing name query for %s ...", name)
         return cls.query.filter(cls.name == name)
+
+    @classmethod
+    def find_by_availability(cls, available: bool = True) -> list:
+        """Returns all Wishlists by their availability
+
+        :param available: True for wishlists that are available
+        :type available: str
+
+        :return: a collection of Wishlists that are available
+        :rtype: list
+
+        """
+        logger.info("Processing available query for %s ...", available)
+        return cls.query.filter(cls.available == available)

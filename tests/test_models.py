@@ -97,6 +97,15 @@ class TestWishlist(unittest.TestCase):
         self.assertEqual(found_wishlist.name, wishlist.name)
         self.assertEqual(found_wishlist.customer_id, wishlist.customer_id)
     
+    def test_delete_a_wishlist(self):
+        """It should Delete a Wishlist"""
+        wishlist = WishlistFactory()
+        wishlist.create()
+        self.assertEqual(len(Wishlist.all()), 1)
+        # delete the wishlist and make sure it isn't in the database
+        wishlist.delete()
+        self.assertEqual(len(Wishlist.all()), 0)
+    
     def test_serialize_a_wishlist(self):
         """It should serialize a wishlist"""
         wishlist = WishlistFactory()
@@ -155,13 +164,13 @@ class TestWishlist(unittest.TestCase):
         logging.debug(wishlists)
         # make sure they got saved
         self.assertEqual(len(Wishlist.all()), 5)
-        # find the 2nd pet in the list
+        # find the 2nd wishlist in the list
         wishlist = Wishlist.find(wishlists[1].id)
         self.assertIsNot(wishlist, None)
         self.assertEqual(wishlist.id, wishlists[1].id)
         self.assertEqual(wishlist.name, wishlists[1].name)
         self.assertEqual(wishlist.customer_id, wishlists[1].customer_id)
-        # find the last pet in the list
+        # find the last wishlist in the list
         wishlist = Wishlist.find(wishlists[-1].id)
         self.assertIsNot(wishlist, None)
         self.assertEqual(wishlist.id, wishlists[-1].id)

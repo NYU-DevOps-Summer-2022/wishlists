@@ -135,8 +135,8 @@ def delete_wishlists(wishlist_id):
 @app.route("/wishlists/<int:customer_id>/<int:wishlist_id>", methods=["PUT"])
 def update_wishlist_name(customer_id, wishlist_id):
     """
-    Creates a Wishlist
-    This endpoint will create a Wishlist based the data in the body that is posted
+    Updates a Wishlist name
+    This endpoint will update a Wishlist name based on the data in the body
     """
 
     app.logger.info("Request to update a wishlist")

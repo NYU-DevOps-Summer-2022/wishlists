@@ -44,8 +44,12 @@ def list_wishlists():
     """Returns all of the Wishlists"""
     app.logger.info("Request for the list of wishlists")
     wishlists = []
+    print(request.args.keys())
     name = request.args.get("name")
-    if name:
+    customer_id = request.args.get("customer_id")
+    if customer_id:
+        wishlists = Wishlist.find_by_customer_id(customer_id)
+    elif name:
         wishlists = Wishlist.find_by_name(name)
     else:
         wishlists = Wishlist.all()

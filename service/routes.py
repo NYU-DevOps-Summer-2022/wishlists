@@ -44,8 +44,12 @@ def list_wishlists():
     """Returns all of the Wishlists"""
     app.logger.info("Request for the list of wishlists")
     wishlists = []
+    print(request.args.keys())
     name = request.args.get("name")
-    if name:
+    customer_id = request.args.get("customer_id")
+    if customer_id:
+        wishlists = Wishlist.find_by_customer_id(customer_id)
+    elif name:
         wishlists = Wishlist.find_by_name(name)
     else:
         wishlists = Wishlist.all()
@@ -72,21 +76,21 @@ def get_wishlists(wishlist_id):
     app.logger.info("Returning wishlist: %s", wishlist.name)
     return jsonify(wishlist.serialize()), status.HTTP_200_OK
 
-# @app.route("/wishlists/<int:customer_id>", methods=["GET"])
-# def get_wishlists(customer_id):
-#     """
-#     Retrieve a all wishlists with a specific customer id
+@app.route("/wishlists/customer/<int:customer_id>", methods=["GET"])
+def get_wishlists_customerID(customer_id):
+    """
+    Retrieve a all wishlists with a specific customer id
+    This endpoint will return any Wishlist based on it's id
+    """
+    wishlists = []
+    app.logger.info("Request for wishlists with customer id: %s", customer_id)
+    wishlists = Wishlist.find_by_customer_id(customer_id)
+    if not wishlists:
+        abort(status.HTTP_404_NOT_FOUND, f"Wishlist with customer id '{customer_id}' was not found.")
 
-#     This endpoint will return any Wishlist based on it's id
-#     """
-#     app.logger.info("Request for wishlists with customer id: %s", customer_id)
-#     wishlists = Wishlist.find_by_customer_id(customer_id)
-#     if not wishlists:
-#         abort(status.HTTP_404_NOT_FOUND, f"Wishlist with customer id '{customer_id}' was not found.")
-
-#     results = [wishlist.serialize() for wishlist in wishlists]
-#     app.logger.info("Returning %s wishlist", len(results))
-#     return jsonify(results.serialize()), status.HTTP_200_OK
+    results = [wishlist.serialize() for wishlist in wishlists]
+    app.logger.info("Returning %s wishlist", len(results))
+    return jsonify(results), status.HTTP_200_OK
 
 ######################################################################
 # ADD A NEW WISHLIST

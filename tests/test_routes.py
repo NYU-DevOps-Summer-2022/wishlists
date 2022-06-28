@@ -5,11 +5,14 @@ Test cases can be run with the following:
   nosetests -v --with-spec --spec-color
   coverage report -m
 """
+import json
 import os
 import logging
 from unittest import TestCase
 from unittest.mock import MagicMock, patch
 from urllib.parse import quote_plus
+
+from sqlalchemy import true
 from service import app
 from service.models import db, init_db, Wishlist
 from service.utils import status  # HTTP Status Codes
@@ -79,6 +82,14 @@ class TestWishlistServer(TestCase):
         data = response.get_json()
         self.assertEqual(data["name"], "Wishlist Demo REST API Service")
 
+    def test_get_wishlist_list(self):
+        """It should Get a list of Wishlists"""
+        self._create_wishlists(8)
+        response = self.app.get(BASE_URL)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = response.get_json()
+        self.assertEqual(len(data), 8)
+    
     def test_get_wishlist(self):
         """It should Get a single Wishlist"""
         # get the id of a wishlist
@@ -127,7 +138,7 @@ class TestWishlistServer(TestCase):
     #     wishlists = self._create_wishlists(10)
     #     test_customer_id = wishlists[0].customer_id
     #     customer_id_wishlists = [wishlist for wishlist in wishlists if wishlist.customer_id == test_customer_id]
-    #     response = self.app.get(f"/wishlists?customer_id={test_customer_id}")
+    #     response = self.app.get(f"/wishlists/customers/customer_id={test_customer_id}")
     #     self.assertEqual(response.status_code, status.HTTP_200_OK)
     #     data = response.get_json()
     #     self.assertEqual(len(data), len(customer_id_wishlists))
@@ -144,3 +155,36 @@ class TestWishlistServer(TestCase):
         # make sure they are deleted
         response = self.app.get(f"{BASE_URL}/{test_wishlist.id}")
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    ######################################################################
+    #  T E S T   S A D   P A T H S
+    ######################################################################
+
+    def test_create_wishlist_no_data(self):
+        """It should not Create a Wishlist with missing data"""
+        response = self.app.post(BASE_URL, json={})
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+    
+    def test_create_wishlist_no_content_type(self):
+        """It should not Create a Wishlist with no content type"""
+        response = self.app.post(BASE_URL)
+        self.assertEqual(response.status_code, status.HTTP_415_UNSUPPORTED_MEDIA_TYPE)
+    
+    def test_create_wishlist_no_customer_id(self):
+        """It should not Create a Wishlist with no customer id"""
+        response = self.app.post(BASE_URL, json={"id":20, "name":"Summer"})
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+    
+    def test_create_wishlist_bad_customer_id(self):
+        """It should not Create a Wishlist with bad Customer ID"""
+        test_wishlist = WishlistFactory()
+        logging.debug(test_wishlist)
+        # change available to a string
+        test_wishlist.customer_id = "fdgg"
+        response = self.app.post(BASE_URL, json=test_wishlist.serialize())
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+    
+    def test_create_wishlist_bad_customer_id(self):
+        """It should not call a method for which there is no route"""
+        response = self.app.put(BASE_URL)
+        self.assertEqual(response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)

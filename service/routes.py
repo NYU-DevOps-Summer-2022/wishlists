@@ -53,7 +53,6 @@ def list_wishlists():
         wishlists = Wishlist.find_by_name(name)
     else:
         wishlists = Wishlist.all()
-
     results = [wishlist.serialize() for wishlist in wishlists]
     app.logger.info("Returning %d wishlists", len(results))
     return jsonify(results), status.HTTP_200_OK
@@ -76,6 +75,9 @@ def get_wishlists(wishlist_id):
     app.logger.info("Returning wishlist: %s", wishlist.name)
     return jsonify(wishlist.serialize()), status.HTTP_200_OK
 
+######################################################################
+# RETRIEVE WISHLISTS OF A CUSTOMER
+######################################################################
 @app.route("/wishlists/customer/<int:customer_id>", methods=["GET"])
 def get_wishlists_customerID(customer_id):
     """

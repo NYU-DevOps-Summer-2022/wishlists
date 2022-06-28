@@ -122,18 +122,18 @@ class TestWishlistServer(TestCase):
         new_wishlist = response.get_json()
         self.assertEqual(new_wishlist["name"], test_wishlist.name)
 
-    # def test_query_wishlist_list_by_customer_id(self):
-    #     """It should Query Wishlists by Customer_ID"""
-    #     wishlists = self._create_wishlists(10)
-    #     test_customer_id = wishlists[0].customer_id
-    #     customer_id_wishlists = [wishlist for wishlist in wishlists if wishlist.customer_id == test_customer_id]
-    #     response = self.app.get(f"/wishlists?customer_id={test_customer_id}")
-    #     self.assertEqual(response.status_code, status.HTTP_200_OK)
-    #     data = response.get_json()
-    #     self.assertEqual(len(data), len(customer_id_wishlists))
-    #     # check the data just to be sure
-    #     for wishlist in data:
-    #         self.assertEqual(wishlist["customer_id"], test_customer_id)
+    def test_query_wishlist_list_by_customer_id(self):
+         """It should Query Wishlists by Customer_ID"""
+         wishlists = self._create_wishlists(10)
+         test_customer_id = wishlists[0].customer_id
+         customer_id_wishlists = [wishlist for wishlist in wishlists if wishlist.customer_id == test_customer_id]
+         response = self.app.get(f"/wishlists?customer_id={test_customer_id}")
+         self.assertEqual(response.status_code, status.HTTP_200_OK)
+         data = response.get_json()
+         self.assertEqual(len(data), len(customer_id_wishlists))
+         # check the data just to be sure
+         for wishlist in data:
+             self.assertEqual(wishlist["customer_id"], test_customer_id)
 
     def test_delete_wishlist(self):
         """It should Delete a Wishlist"""

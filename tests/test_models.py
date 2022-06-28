@@ -218,3 +218,28 @@ class TestWishlist(unittest.TestCase):
     def test_find_or_404_not_found(self):
         """It should return 404 not found"""
         self.assertRaises(NotFound, Wishlist.find_or_404, 0)
+
+    def test_wishlistall(self):
+        """It should get all the wishlists of a customer"""
+        wishlists = WishlistFactory.create_batch(10)
+        for wishlist in wishlists:
+            wishlist.create()
+        logging.debug(wishlists)
+        customer_id = wishlists[0].customer_id
+        count = len([wishlist for wishlist in wishlists if wishlist.customer_id == customer_id])
+        found = Wishlist.get_wishlists_custid(customer_id)
+        self.assertEqual(found.count(), count)
+        for wishlist in found:
+            self.assertEqual(wishlist.customer_id, customer_id)
+    
+    def test_wishlist(self):
+        """Get all wishlists available"""
+        wishlists = WishlistFactory.create_batch(10)
+        for wishlist in wishlists:
+            wishlist.create()
+        logging.debug(wishlists)
+        count = len([wishlist for wishlist in wishlists if wishlist.customer_id == customer_id])
+        found = Wishlist.list_wishlists()
+        self.assertEqual(found.count(), count)
+   
+        

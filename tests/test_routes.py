@@ -122,18 +122,21 @@ class TestWishlistServer(TestCase):
         new_wishlist = response.get_json()
         self.assertEqual(new_wishlist["name"], test_wishlist.name)
 
-    # def test_query_wishlist_list_by_customer_id(self):
-    #     """It should Query Wishlists by Customer_ID"""
-    #     wishlists = self._create_wishlists(10)
-    #     test_customer_id = wishlists[0].customer_id
-    #     customer_id_wishlists = [wishlist for wishlist in wishlists if wishlist.customer_id == test_customer_id]
-    #     response = self.app.get(f"/wishlists?customer_id={test_customer_id}")
-    #     self.assertEqual(response.status_code, status.HTTP_200_OK)
-    #     data = response.get_json()
-    #     self.assertEqual(len(data), len(customer_id_wishlists))
-    #     # check the data just to be sure
-    #     for wishlist in data:
-    #         self.assertEqual(wishlist["customer_id"], test_customer_id)
+    def test_query_wishlist_list_by_customer_id(self):
+        """It should Query Wishlists by Customer_ID"""
+        wishlists = self._create_wishlists(10)
+        test_customer_id = wishlists[0].customer_id
+        customer_id_wishlists = []
+        for wishlist in wishlists :
+            if wishlist.customer_id == test_customer_id :
+                customer_id_wishlists.append(wishlist)
+        response = self.app.get(f"/wishlists/customer/{test_customer_id}")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = response.get_json()
+        self.assertEqual(len(data), len(customer_id_wishlists))
+        # check the data just to be sure
+        for wishlist in data:
+            self.assertEqual(wishlist["customer_id"], test_customer_id)
 
     def test_delete_wishlist(self):
         """It should Delete a Wishlist"""
@@ -143,4 +146,10 @@ class TestWishlistServer(TestCase):
         self.assertEqual(len(response.data), 0)
         # make sure they are deleted
         response = self.app.get(f"{BASE_URL}/{test_wishlist.id}")
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_list_by_customer_id_not_found(self):
+        '''It should return HTTP 404 not found'''
+        customer_id = -1
+        response = self.app.get(f"/wishlists/customer/{customer_id}")
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)

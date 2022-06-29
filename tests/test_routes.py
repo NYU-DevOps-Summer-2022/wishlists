@@ -327,3 +327,30 @@ class TestWishlistServer(TestCase):
         self.assertIsNotNone(item.id)
         self.assertEqual(item.wishlist_id, data["wishlist_id"])
         self.assertEqual(item.product_id, data["product_id"])
+
+    def test_add_product_to_wishlist_does_not_exist(self):
+        """Adds products to a wishlist, check where wishlist or customer does not exist """
+        test_wishlist = WishlistFactory()
+        logging.debug("Test Wishlist: %s", test_wishlist.serialize())
+        response = self.app.post(
+            BASE_URL, json=test_wishlist.serialize(), content_type=CONTENT_TYPE_JSON
+        )
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        # Check the data is correct
+        new_wishlist = response.get_json()
+
+        item = ItemFactory()
+        item.wishlist_id = new_wishlist["id"]
+
+        response = self.app.put(
+            BASE_URL+"/"+str(10)+"/"+str(new_wishlist["id"])+"/"+str(item.product_id), content_type=CONTENT_TYPE_JSON
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+        response = self.app.put(
+            BASE_URL+"/"+str(test_wishlist.customer_id)+"/"+str(10)+"/"+str(item.product_id), content_type=CONTENT_TYPE_JSON
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)

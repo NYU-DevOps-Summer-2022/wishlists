@@ -14,9 +14,9 @@ from urllib.parse import quote_plus
 
 from sqlalchemy import true
 from service import app
-from service.models import db, init_db, Wishlist
+from service.models import db, init_db, Wishlist, Item
 from service.utils import status  # HTTP Status Codes
-from tests.factories import WishlistFactory
+from tests.factories import WishlistFactory, ItemFactory
 
 DATABASE_URI = os.getenv(
     "DATABASE_URI", "postgresql://postgres:postgres@localhost:5432/testdb"
@@ -277,3 +277,53 @@ class TestWishlistServer(TestCase):
             )
 
             self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_add_product_to_wishlist(self):
+        """Adds products to a wishlist """
+        test_wishlist = WishlistFactory()
+        logging.debug("Test Wishlist: %s", test_wishlist.serialize())
+        response = self.app.post(
+            BASE_URL, json=test_wishlist.serialize(), content_type=CONTENT_TYPE_JSON
+        )
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        # Make sure location header is set
+        location = response.headers.get("Location", None)
+        self.assertIsNotNone(location)
+
+        # Check the data is correct
+        new_wishlist = response.get_json()
+        self.assertEqual(new_wishlist["name"], test_wishlist.name)
+
+        # Check that the location header was correct
+        response = self.app.get(location, content_type=CONTENT_TYPE_JSON)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        new_wishlist = response.get_json()
+        self.assertEqual(new_wishlist["name"], test_wishlist.name)
+
+        item = ItemFactory()
+        item.wishlist_id = new_wishlist["id"]
+
+        response = self.app.put(
+            BASE_URL+"/"+str(test_wishlist.customer_id)+"/"+str(new_wishlist["id"])+"/"+str(item.product_id), content_type=CONTENT_TYPE_JSON
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        data = response.get_json()
+
+        self.assertIsNotNone(item.id)
+        self.assertEqual(item.wishlist_id, data["wishlist_id"])
+        self.assertEqual(item.product_id, data["product_id"])
+
+        response = self.app.put(
+            BASE_URL+"/"+str(test_wishlist.customer_id)+"/"+str(new_wishlist["id"])+"/"+str(item.product_id), content_type=CONTENT_TYPE_JSON
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        data = response.get_json()
+
+        self.assertIsNotNone(item.id)
+        self.assertEqual(item.wishlist_id, data["wishlist_id"])
+        self.assertEqual(item.product_id, data["product_id"])

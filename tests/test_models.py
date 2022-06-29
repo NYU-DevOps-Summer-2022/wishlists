@@ -7,7 +7,7 @@ import logging
 import unittest
 from sqlalchemy import true
 from werkzeug.exceptions import NotFound
-from service.models import Wishlist, DataValidationError, db
+from service.models import Wishlist, Item, DataValidationError, db
 from service import app
 from tests.factories import WishlistFactory
 
@@ -218,3 +218,58 @@ class TestWishlist(unittest.TestCase):
     def test_find_or_404_not_found(self):
         """It should return 404 not found"""
         self.assertRaises(NotFound, Wishlist.find_or_404, 0)
+
+######################################################################
+#  I T E M   M O D E L   T E S T   C A S E S
+######################################################################
+class TestItem(unittest.TestCase):
+    """ Test Cases for Item Model """
+
+    @classmethod
+    def setUpClass(cls):
+        """ This runs once before the entire test suite """
+        app.config["TESTING"] = True
+        app.config["DEBUG"] = False
+        app.config["SQLALCHEMY_DATABASE_URI"] = DATABASE_URI
+        app.logger.setLevel(logging.CRITICAL)
+        Item.init_db(app)
+
+    @classmethod
+    def tearDownClass(cls):
+        """ This runs once after the entire test suite """
+        db.session.close()
+
+    def setUp(self):
+        """ This runs before each test """
+        db.session.query(Wishlist).delete()  # clean up the last tests
+        db.session.commit()
+
+    def tearDown(self):
+        """ This runs after each test """
+        db.session.remove()
+
+    ######################################################################
+    #  T E S T   C A S E S
+    ######################################################################
+
+    def test_create_wishlist_item(self):
+        """It should Create a wishlist item and assert that it exists"""
+        item = Item(wishlist_id=1, product_id=10)
+        self.assertEqual(str(item), "<Item id=[None] wishlist_id=[1] product_id=[10]>")
+        self.assertTrue(item is not None)
+        self.assertEqual(item.id, None)
+        self.assertEqual(item.wishlist_id, 1)
+        self.assertEqual(item.product_id, 10)
+
+    def test_find_by_wishlist_id_and_product_id(self):
+        """It should find wishlist items by wishlist id and product id"""
+        item = Item(wishlist_id=1, product_id=10)
+        item.create()
+
+        logging.debug(item)
+
+        items = Item.find_by_wishlist_id_and_product_id(1, 10)
+
+        results = [item.serialize() for item in items]
+
+        self.assertGreater(len(results), 0)

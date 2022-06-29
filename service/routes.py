@@ -15,7 +15,7 @@ from service.utils import status  # HTTP Status Codes
 # For this example we'll use SQLAlchemy, a popular ORM that supports a
 # variety of backends including SQLite, MySQL, and PostgreSQL
 from flask_sqlalchemy import SQLAlchemy
-from service.models import Wishlist, DataValidationError
+from service.models import Wishlist, Item, DataValidationError
 
 # Import Flask application
 from . import app
@@ -163,6 +163,43 @@ def update_wishlist_name(customer_id, wishlist_id):
 
     return jsonify(message), status.HTTP_200_OK
 
+@app.route("/wishlists/<int:customer_id>/<int:wishlist_id>/<int:product_id>", methods=["PUT"])
+def update_wishlist_products(customer_id, wishlist_id, product_id):
+    """
+    Updates a Wishlist, adds products
+    This endpoint will add a new product to a wishlist
+    """
+
+    app.logger.info("Request to update a wishlist")
+    check_content_type("application/json")
+
+    wishlists = []
+    app.logger.info("Request for wishlists with customer id: %s", customer_id)
+
+    wishlists = Wishlist.find_by_customer_id(customer_id)
+
+    if not wishlists:
+        abort(status.HTTP_404_NOT_FOUND, f"Wishlist with customer id '{customer_id}' was not found.")
+
+    results = [wishlist.serialize() for wishlist in wishlists]
+
+    if not any(wishlist['id'] == wishlist_id for wishlist in results):
+        abort(status.HTTP_404_NOT_FOUND, f"Wishlist with customer id '{customer_id}' and id '{wishlist_id}' was not found.")
+
+    items = Item.find_by_wishlist_id_and_product_id(wishlist_id, product_id)
+    results = [item.serialize() for item in items]
+
+    if (len(results) != 0):
+        # already exists, so return same object
+        message = results[0]
+        return jsonify(message), status.HTTP_200_OK
+
+    item = Item()
+    item.deserialize(wishlist_id, product_id)
+    item.create()
+    message = item.serialize()
+
+    return jsonify(message), status.HTTP_201_CREATED
 
 ######################################################################
 #  U T I L I T Y   F U N C T I O N S

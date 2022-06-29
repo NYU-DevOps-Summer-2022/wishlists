@@ -158,3 +158,78 @@ class Wishlist(db.Model):
         logger.info("Processing category query for %s ...", customer_id)
         return cls.query.filter(cls.customer_id == customer_id)
 
+class Item(db.Model):
+    """
+    Class that represents a Wishlist item
+    """
+
+    # Table Schema
+    id = db.Column(db.Integer, primary_key=True)
+    wishlist_id = db.Column(db.Integer, nullable=False)
+    product_id = db.Column(db.Integer, nullable=False)
+
+    def __repr__(self):
+        return "<Item id=[%s] wishlist_id=[%s] product_id=[%s]>" % (self.id, self.wishlist_id, self.product_id)
+
+    def create(self):
+        """
+        Creates a Wishlist to the database
+        """
+        logger.info("Creating wishlist_id=[%s] product_id=[%s]", self.wishlist_id, self.product_id)
+        self.id = None  # id must be none to generate next primary key
+        db.session.add(self)
+        db.session.commit()
+
+    def serialize(self):
+        """ Serializes a Wishlist into a dictionary """
+        return {
+            "id": self.id, 
+            "wishlist_id": self.wishlist_id,
+            "product_id": self.product_id
+        }
+
+    def deserialize(self, wishlist_id, product_id):
+        """
+        Deserializes the wishlist from wishlist_id and product_id
+
+        Args:
+            wishlist_id, product_id
+        """
+
+        # skipping validations required since we are accepting them as integers in the API endpoint itself, 
+        # can add later if required
+        self.wishlist_id = wishlist_id
+        self.product_id = product_id
+
+        return self
+
+    ##################################################
+    # CLASS METHODS
+    ##################################################
+
+    @classmethod
+    def init_db(cls, app):
+        """ Initializes the database session """
+        logger.info("Initializing database")
+        cls.app = app
+        # This is where we initialize SQLAlchemy from the Flask app
+        db.init_app(app)
+        app.app_context().push()
+        db.create_all()  # make our SQLAlchemy tables
+
+    @classmethod
+    def find_by_wishlist_id_and_product_id(cls, wishlist_id: int, product_id: int) -> list:
+        """Returns the item with wishlist_id and product_id
+
+        :param wishlist_id: the wishlist_id of the Wishlist you want to match
+        :type customer_id: int
+
+        :param product_id: the product_id of the Wishlist you want to match
+        :type product_id: int
+
+        :return: a collection of wishlist items
+        :rtype: list
+
+        """
+        logger.info("Processing category query for wishlist_id %s and product_id %s ...", wishlist_id, product_id)
+        return cls.query.filter(cls.wishlist_id == wishlist_id, cls.product_id == product_id)

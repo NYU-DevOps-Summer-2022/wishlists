@@ -4,8 +4,6 @@ Models for Wishlist
 All of the models are stored in this module
 """
 import logging
-from enum import Enum
-from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 
 logger = logging.getLogger("flask.app")
@@ -13,9 +11,11 @@ logger = logging.getLogger("flask.app")
 # Create the SQLAlchemy object to be initialized later in init_db()
 db = SQLAlchemy()
 
+
 def init_db(app):
     """Initialize the SQLAlchemy app"""
     Wishlist.init_db(app)
+
 
 class DataValidationError(Exception):
     """ Used for an data validation errors when deserializing """
@@ -67,7 +67,7 @@ class Wishlist(db.Model):
     def serialize(self):
         """ Serializes a Wishlist into a dictionary """
         return {
-            "id": self.id, 
+            "id": self.id,
             "name": self.name,
             "customer_id": self.customer_id
         }
@@ -81,7 +81,7 @@ class Wishlist(db.Model):
         """
         try:
             self.name = data["name"]
-            if isinstance(data["customer_id"], int) and type(data["customer_id"])!=bool:
+            if isinstance(data["customer_id"], int) and type(data["customer_id"]) != bool:
                 self.customer_id = data["customer_id"]
             else:
                 raise DataValidationError("Invalid type for integer [customer_id]: " + str(type(data["customer_id"])))
@@ -93,7 +93,6 @@ class Wishlist(db.Model):
             raise DataValidationError("Invalid Wishlist: body of request contained bad or no data" + str(error))
         return self
 
-    
     ##################################################
     # CLASS METHODS
     ##################################################
@@ -119,7 +118,7 @@ class Wishlist(db.Model):
         """ Finds a Wishlist by it's ID """
         logger.info("Processing lookup for id %s ...", by_id)
         return cls.query.get(by_id)
-    
+
     @classmethod
     def find_or_404(cls, wishlist_id: int):
         """Find a Wishlist by it's id
@@ -143,7 +142,7 @@ class Wishlist(db.Model):
         """
         logger.info("Processing name query for %s ...", name)
         return cls.query.filter(cls.name == name)
-    
+
     @classmethod
     def find_by_customer_id(cls, customer_id: int) -> list:
         """Returns all of the Wishlists with a specific customer_id
@@ -151,12 +150,13 @@ class Wishlist(db.Model):
         :param customer_id: the customer_id of the Wishlists you want to match
         :type customer_id: str
 
-        :return: a collection of Wishlists by the customer with customer id <customer_id> 
+        :return: a collection of Wishlists by the customer with customer id <customer_id>
         :rtype: list
 
         """
         logger.info("Processing category query for %s ...", customer_id)
         return cls.query.filter(cls.customer_id == customer_id)
+
 
 class Item(db.Model):
     """
@@ -183,7 +183,7 @@ class Item(db.Model):
     def serialize(self):
         """ Serializes a Wishlist into a dictionary """
         return {
-            "id": self.id, 
+            "id": self.id,
             "wishlist_id": self.wishlist_id,
             "product_id": self.product_id
         }
@@ -196,7 +196,7 @@ class Item(db.Model):
             wishlist_id, product_id
         """
 
-        # skipping validations required since we are accepting them as integers in the API endpoint itself, 
+        # skipping validations required since we are accepting them as integers in the API endpoint itself,
         # can add later if required
         self.wishlist_id = wishlist_id
         self.product_id = product_id

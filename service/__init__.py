@@ -5,7 +5,6 @@ This module creates and configures the Flask app and sets up the logging
 and SQL database
 """
 import sys
-import logging
 from flask import Flask
 from service.utils import log_handlers
 
@@ -14,7 +13,7 @@ app = Flask(__name__)
 app.config.from_object("config")
 
 # Dependencies require we import the routes AFTER the Flask app is created
-from service import routes, models # pylint: disable=wrong-import-position, wrong-import-order
+from service import routes  # pylint: disable=wrong-import-position, wrong-import-order
 from service.utils import error_handlers  # pylint: disable=wrong-import-position
 
 # Set up logging for production

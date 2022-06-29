@@ -156,47 +156,8 @@ class TestWishlistServer(TestCase):
         response = self.app.get(f"{BASE_URL}/{test_wishlist.id}")
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
-    ######################################################################
-    #  T E S T   S A D   P A T H S
-    ######################################################################
-
-    def test_create_wishlist_no_data(self):
-        """It should not Create a Wishlist with missing data"""
-        response = self.app.post(BASE_URL, json={})
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-
-    def test_create_wishlist_no_content_type(self):
-        """It should not Create a Wishlist with no content type"""
-        response = self.app.post(BASE_URL)
-        self.assertEqual(response.status_code, status.HTTP_415_UNSUPPORTED_MEDIA_TYPE)
-
-    def test_create_wishlist_no_customer_id(self):
-        """It should not Create a Wishlist with no customer id"""
-        response = self.app.post(BASE_URL, json={"id": 20, "name": "Summer"})
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-
-    def test_create_wishlist_bad_customer_id(self):
-        """It should not Create a Wishlist with bad Customer ID"""
-        test_wishlist = WishlistFactory()
-        logging.debug(test_wishlist)
-        # change available to a string
-        test_wishlist.customer_id = "fdgg"
-        response = self.app.post(BASE_URL, json=test_wishlist.serialize())
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-
-    def test_create_wishlist_bad_customer_id_no_route(self):
-        """It should not call a method for which there is no route"""
-        response = self.app.put(BASE_URL)
-        self.assertEqual(response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
-
-    def test_list_by_customer_id_not_found(self):
-        '''It should return HTTP 404 not found'''
-        customer_id = -1
-        response = self.app.get(f"/wishlists/customer/{customer_id}")
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
-
     def test_update_wishlist_name(self):
-        """Update the name of a wishlist """
+        """It should update the name of a wishlist"""
         test_wishlist = WishlistFactory()
         logging.debug("Test Wishlist: %s", test_wishlist.serialize())
         response = self.app.post(
@@ -235,8 +196,47 @@ class TestWishlistServer(TestCase):
         self.assertEqual(new_wishlist["id"], data["id"])
         self.assertEqual(new_wishlist["customer_id"], data["customer_id"])
 
+    ######################################################################
+    #  T E S T   S A D   P A T H S
+    ######################################################################
+
+    def test_create_wishlist_no_data(self):
+        """It should not Create a Wishlist with missing data"""
+        response = self.app.post(BASE_URL, json={})
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_create_wishlist_no_content_type(self):
+        """It should not Create a Wishlist with no content type"""
+        response = self.app.post(BASE_URL)
+        self.assertEqual(response.status_code, status.HTTP_415_UNSUPPORTED_MEDIA_TYPE)
+
+    def test_create_wishlist_no_customer_id(self):
+        """It should not Create a Wishlist with no customer id"""
+        response = self.app.post(BASE_URL, json={"id": 20, "name": "Summer"})
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_create_wishlist_bad_customer_id(self):
+        """It should not Create a Wishlist with bad Customer ID"""
+        test_wishlist = WishlistFactory()
+        logging.debug(test_wishlist)
+        # change available to a string
+        test_wishlist.customer_id = "fdgg"
+        response = self.app.post(BASE_URL, json=test_wishlist.serialize())
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_create_wishlist_bad_customer_id_no_route(self):
+        """It should not call a method for which there is no route"""
+        response = self.app.put(BASE_URL)
+        self.assertEqual(response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
+
+    def test_list_by_customer_id_not_found(self):
+        """It should return HTTP 404 not found"""
+        customer_id = -1
+        response = self.app.get(f"/wishlists/customer/{customer_id}")
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
     def test_update_wishlist_name_wishlist_not_found(self):
-        """Update the name of a wishlist """
+        """It should return HTTP 404 not found """
         test_wishlist = WishlistFactory()
         logging.debug("Test Wishlist: %s", test_wishlist.serialize())
         response = self.app.post(
@@ -256,7 +256,7 @@ class TestWishlistServer(TestCase):
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_update_wishlist_name_customer_not_found(self):
-        """Update the name of a wishlist """
+        """It should return HTTP 404 not found when trying to update the wishlist"""
         test_wishlist = WishlistFactory()
         logging.debug("Test Wishlist: %s", test_wishlist.serialize())
         response = self.app.post(

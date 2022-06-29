@@ -10,7 +10,7 @@ import logging
 from unittest import TestCase
 
 from service import app
-from service.models import db, init_db, Wishlist
+from service.models import db, init_db, Wishlist, Item
 from service.utils import status  # HTTP Status Codes
 from tests.factories import WishlistFactory, ItemFactory
 
@@ -46,6 +46,7 @@ class TestWishlistServer(TestCase):
         """ This runs before each test """
         self.app = app.test_client()
         db.session.query(Wishlist).delete()  # clean up the last tests
+        db.session.query(Item).delete()  # clean up the last tests
         db.session.commit()
 
     def tearDown(self):
@@ -91,10 +92,27 @@ class TestWishlistServer(TestCase):
         """It should Get a single Wishlist"""
         # get the id of a wishlist
         test_wishlist = self._create_wishlists(1)[0]
+
+        item = ItemFactory()
+        item.wishlist_id = test_wishlist.id
+
+        response = self.app.put(
+            BASE_URL+"/"+str(test_wishlist.customer_id)+"/"+str(test_wishlist.id)+"/"+str(item.product_id),
+            content_type=CONTENT_TYPE_JSON
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        items = Item.find_by_wishlist_id(test_wishlist.id)
+        self.assertEqual(1, len([item.serialize() for item in items]))
+
         response = self.app.get(f"{BASE_URL}/{test_wishlist.id}")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         data = response.get_json()
         self.assertEqual(data["name"], test_wishlist.name)
+        self.assertIsNotNone(data["items"][0]["id"])
+        self.assertEqual(data["items"][0]["wishlist_id"], item.wishlist_id)
+        self.assertEqual(data["items"][0]["product_id"], item.product_id)
 
     def test_get_wishlist_not_found(self):
         """It should not Get a wishlist thats not found"""
@@ -149,12 +167,29 @@ class TestWishlistServer(TestCase):
     def test_delete_wishlist(self):
         """It should Delete a Wishlist"""
         test_wishlist = self._create_wishlists(1)[0]
+
+        item = ItemFactory()
+        item.wishlist_id = test_wishlist.id
+
+        response = self.app.put(
+            BASE_URL+"/"+str(test_wishlist.customer_id)+"/"+str(test_wishlist.id)+"/"+str(item.product_id),
+            content_type=CONTENT_TYPE_JSON
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        items = Item.find_by_wishlist_id(test_wishlist.id)
+        self.assertEqual(1, len([item.serialize() for item in items]))
+
         response = self.app.delete(f"{BASE_URL}/{test_wishlist.id}")
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertEqual(len(response.data), 0)
         # make sure they are deleted
         response = self.app.get(f"{BASE_URL}/{test_wishlist.id}")
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+        items = Item.find_by_wishlist_id(test_wishlist.id)
+        self.assertEqual(0, len([item.serialize() for item in items]))
 
     ######################################################################
     #  T E S T   S A D   P A T H S

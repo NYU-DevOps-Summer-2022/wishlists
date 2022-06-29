@@ -132,7 +132,36 @@ def delete_wishlists(wishlist_id):
     app.logger.info("Wishlist with ID [%s] delete complete.", wishlist_id)
     return "", status.HTTP_204_NO_CONTENT
 
+@app.route("/wishlists/<int:customer_id>/<int:wishlist_id>", methods=["PUT"])
+def update_wishlist_name(customer_id, wishlist_id):
+    """
+    Updates a Wishlist name
+    This endpoint will update a Wishlist name based on the data in the body
+    """
 
+    app.logger.info("Request to update a wishlist")
+    check_content_type("application/json")
+
+    wishlists = []
+    app.logger.info("Request for wishlists with customer id: %s", customer_id)
+
+    wishlists = Wishlist.find_by_customer_id(customer_id)
+
+    if not wishlists:
+        abort(status.HTTP_404_NOT_FOUND, f"Wishlist with customer id '{customer_id}' was not found.")
+
+    results = [wishlist.serialize() for wishlist in wishlists]
+
+    if not any(wishlist['id'] == wishlist_id for wishlist in results):
+        abort(status.HTTP_404_NOT_FOUND, f"Wishlist with customer id '{customer_id}' and id '{wishlist_id}' was not found.")
+
+    wishlist = Wishlist.find(wishlist_id)
+    wishlist.name = request.get_json()["name"]
+    wishlist.update()
+
+    message = wishlist.serialize()
+
+    return jsonify(message), status.HTTP_200_OK
 
 
 ######################################################################

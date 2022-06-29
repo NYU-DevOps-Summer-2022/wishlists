@@ -197,3 +197,83 @@ class TestWishlistServer(TestCase):
         customer_id = -1
         response = self.app.get(f"/wishlists/customer/{customer_id}")
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_update_wishlist_name(self):
+        """Update the name of a wishlist """
+        test_wishlist = WishlistFactory()
+        logging.debug("Test Wishlist: %s", test_wishlist.serialize())
+        response = self.app.post(
+            BASE_URL, json=test_wishlist.serialize(), content_type=CONTENT_TYPE_JSON
+        )
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        # Make sure location header is set
+        location = response.headers.get("Location", None)
+        self.assertIsNotNone(location)
+
+        # Check the data is correct
+        new_wishlist = response.get_json()
+        self.assertEqual(new_wishlist["name"], test_wishlist.name)
+
+        # Check that the location header was correct
+        response = self.app.get(location, content_type=CONTENT_TYPE_JSON)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        new_wishlist = response.get_json()
+        self.assertEqual(new_wishlist["name"], test_wishlist.name)
+
+        # Update wishlist name
+        test_wishlist.name = "Winter"
+
+        response = self.app.put(
+            BASE_URL+"/"+str(test_wishlist.customer_id)+"/"+str(new_wishlist["id"]), json=test_wishlist.serialize(), content_type=CONTENT_TYPE_JSON
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        data = response.get_json()
+
+        self.assertEqual(test_wishlist.name, data["name"])
+        self.assertEqual(new_wishlist["id"], data["id"])
+        self.assertEqual(new_wishlist["customer_id"], data["customer_id"])
+
+    def test_update_wishlist_name_wishlist_not_found(self):
+            """Update the name of a wishlist """
+            test_wishlist = WishlistFactory()
+            logging.debug("Test Wishlist: %s", test_wishlist.serialize())
+            response = self.app.post(
+                BASE_URL, json=test_wishlist.serialize(), content_type=CONTENT_TYPE_JSON
+            )
+            self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+            # Check the data is correct
+            new_wishlist = response.get_json()
+
+            # Update wishlist name
+            test_wishlist.name = "Winter"
+
+            response = self.app.put(
+                BASE_URL+"/"+str(test_wishlist.customer_id)+"/0", json=test_wishlist.serialize(), content_type=CONTENT_TYPE_JSON
+            )
+
+            self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_update_wishlist_name_customer_not_found(self):
+            """Update the name of a wishlist """
+            test_wishlist = WishlistFactory()
+            logging.debug("Test Wishlist: %s", test_wishlist.serialize())
+            response = self.app.post(
+                BASE_URL, json=test_wishlist.serialize(), content_type=CONTENT_TYPE_JSON
+            )
+            self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+            # Check the data is correct
+            new_wishlist = response.get_json()
+
+            # Update wishlist name
+            test_wishlist.name = "Winter"
+
+            response = self.app.put(
+                BASE_URL+"/0"+"/"+str(new_wishlist["id"]), json=test_wishlist.serialize(), content_type=CONTENT_TYPE_JSON
+            )
+
+            self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)

@@ -180,6 +180,12 @@ class Item(db.Model):
         db.session.add(self)
         db.session.commit()
 
+    def delete(self):
+        """ Removes a Wishlist item from the data store """
+        logger.info("Deleting %s", self.id)
+        db.session.delete(self)
+        db.session.commit()
+
     def serialize(self):
         """ Serializes a Wishlist into a dictionary """
         return {
@@ -222,7 +228,7 @@ class Item(db.Model):
         """Returns the item with wishlist_id and product_id
 
         :param wishlist_id: the wishlist_id of the Wishlist you want to match
-        :type customer_id: int
+        :type wishlist_id: int
 
         :param product_id: the product_id of the Wishlist you want to match
         :type product_id: int
@@ -233,3 +239,17 @@ class Item(db.Model):
         """
         logger.info("Processing category query for wishlist_id %s and product_id %s ...", wishlist_id, product_id)
         return cls.query.filter(cls.wishlist_id == wishlist_id, cls.product_id == product_id)
+
+    @classmethod
+    def find_by_wishlist_id(cls, wishlist_id: int) -> list:
+        """Returns the item with wishlist_id and product_id
+
+        :param wishlist_id: the wishlist_id of the Wishlist you want to match
+        :type wishlist_id: int
+
+        :return: a collection of wishlist items
+        :rtype: list
+
+        """
+        logger.info("Processing category query for wishlist_id %s ...", wishlist_id)
+        return cls.query.filter(cls.wishlist_id == wishlist_id)

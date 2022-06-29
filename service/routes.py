@@ -69,7 +69,12 @@ def get_wishlists(wishlist_id):
         abort(status.HTTP_404_NOT_FOUND, f"Wishlist with id '{wishlist_id}' was not found.")
 
     app.logger.info("Returning wishlist: %s", wishlist.name)
-    return jsonify(wishlist.serialize()), status.HTTP_200_OK
+
+    response = wishlist.serialize()
+
+    response["items"] = [item.serialize() for item in Item.find_by_wishlist_id(wishlist_id)]
+
+    return jsonify(response), status.HTTP_200_OK
 
 
 ######################################################################
@@ -127,6 +132,11 @@ def delete_wishlists(wishlist_id):
     wishlist = Wishlist.find(wishlist_id)
     if wishlist:
         wishlist.delete()
+
+        items = Item.find_by_wishlist_id(wishlist_id)
+
+        for item in items:
+            item.delete()
 
     app.logger.info("Wishlist with ID [%s] delete complete.", wishlist_id)
     return "", status.HTTP_204_NO_CONTENT

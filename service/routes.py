@@ -142,8 +142,8 @@ def delete_wishlists(wishlist_id):
     return "", status.HTTP_204_NO_CONTENT
 
 
-@app.route("/wishlists/<int:customer_id>/<int:wishlist_id>", methods=["PUT"])
-def update_wishlist_name(customer_id, wishlist_id):
+@app.route("/wishlists/<int:wishlist_id>", methods=["PUT"])
+def update_wishlist_name(wishlist_id):
     """
     Updates a Wishlist name
     This endpoint will update a Wishlist name based on the data in the body
@@ -151,6 +151,11 @@ def update_wishlist_name(customer_id, wishlist_id):
 
     app.logger.info("Request to update a wishlist")
     check_content_type("application/json")
+
+    req = request.get_json()
+
+    # TODO : validate param
+    customer_id = req["customer_id"]
 
     wishlists = []
     app.logger.info("Request for wishlists with customer id: %s", customer_id)
@@ -174,8 +179,8 @@ def update_wishlist_name(customer_id, wishlist_id):
     return jsonify(message), status.HTTP_200_OK
 
 
-@app.route("/wishlists/<int:customer_id>/<int:wishlist_id>/<int:product_id>", methods=["PUT"])
-def update_wishlist_products(customer_id, wishlist_id, product_id):
+@app.route("/wishlists/<int:wishlist_id>/products/<int:product_id>", methods=["PUT"])
+def update_wishlist_products(wishlist_id, product_id):
     """
     Updates a Wishlist, adds products
     This endpoint will add a new product to a wishlist
@@ -183,6 +188,11 @@ def update_wishlist_products(customer_id, wishlist_id, product_id):
 
     app.logger.info("Request to update a wishlist")
     check_content_type("application/json")
+
+    req = request.get_json()
+
+    # TODO : validate param
+    customer_id = req["customer_id"]
 
     wishlists = []
     app.logger.info("Request for wishlists with customer id: %s", customer_id)

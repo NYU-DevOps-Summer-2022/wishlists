@@ -96,8 +96,11 @@ class TestWishlistServer(TestCase):
         item = ItemFactory()
         item.wishlist_id = test_wishlist.id
 
+        req = {"customer_id":test_wishlist.customer_id}
+
         response = self.app.put(
-            BASE_URL+"/"+str(test_wishlist.customer_id)+"/"+str(test_wishlist.id)+"/"+str(item.product_id),
+            BASE_URL+"/"+str(test_wishlist.id)+"/products/"+str(item.product_id),
+            json=req,
             content_type=CONTENT_TYPE_JSON
         )
 
@@ -171,8 +174,11 @@ class TestWishlistServer(TestCase):
         item = ItemFactory()
         item.wishlist_id = test_wishlist.id
 
+        req = {"customer_id":test_wishlist.customer_id}
+
         response = self.app.put(
-            BASE_URL+"/"+str(test_wishlist.customer_id)+"/"+str(test_wishlist.id)+"/"+str(item.product_id),
+            BASE_URL+"/"+str(test_wishlist.id)+"/products/"+str(item.product_id),
+            json=req,
             content_type=CONTENT_TYPE_JSON
         )
 
@@ -218,7 +224,7 @@ class TestWishlistServer(TestCase):
         test_wishlist.name = "Winter"
 
         response = self.app.put(
-            BASE_URL+"/"+str(test_wishlist.customer_id)+"/"+str(new_wishlist["id"]),
+            BASE_URL+"/"+str(new_wishlist["id"]),
             json=test_wishlist.serialize(),
             content_type=CONTENT_TYPE_JSON
         )
@@ -283,7 +289,7 @@ class TestWishlistServer(TestCase):
         test_wishlist.name = "Winter"
 
         response = self.app.put(
-            BASE_URL+"/"+str(test_wishlist.customer_id)+"/0",
+            BASE_URL+"/0",
             json=test_wishlist.serialize(),
             content_type=CONTENT_TYPE_JSON
         )
@@ -304,9 +310,10 @@ class TestWishlistServer(TestCase):
 
         # Update wishlist name
         test_wishlist.name = "Winter"
+        test_wishlist.customer_id = 0
 
         response = self.app.put(
-            BASE_URL+"/0"+"/"+str(new_wishlist["id"]),
+            BASE_URL+"/"+str(new_wishlist["id"]),
             json=test_wishlist.serialize(),
             content_type=CONTENT_TYPE_JSON
         )
@@ -342,8 +349,11 @@ class TestWishlistServer(TestCase):
         item = ItemFactory()
         item.wishlist_id = new_wishlist["id"]
 
+        req = {"customer_id":test_wishlist.customer_id}
+
         response = self.app.put(
-            BASE_URL+"/"+str(test_wishlist.customer_id)+"/"+str(new_wishlist["id"])+"/"+str(item.product_id),
+            BASE_URL+"/"+str(new_wishlist["id"])+"/products/"+str(item.product_id),
+            json=req,
             content_type=CONTENT_TYPE_JSON
         )
 
@@ -355,8 +365,11 @@ class TestWishlistServer(TestCase):
         self.assertEqual(item.wishlist_id, data["wishlist_id"])
         self.assertEqual(item.product_id, data["product_id"])
 
+        req = {"customer_id":test_wishlist.customer_id}
+
         response = self.app.put(
-            BASE_URL+"/"+str(test_wishlist.customer_id)+"/"+str(new_wishlist["id"])+"/"+str(item.product_id),
+            BASE_URL+"/"+str(new_wishlist["id"])+"/products/"+str(item.product_id),
+            json=req,
             content_type=CONTENT_TYPE_JSON
         )
 
@@ -383,8 +396,12 @@ class TestWishlistServer(TestCase):
         item = ItemFactory()
         item.wishlist_id = new_wishlist["id"]
 
+        req = {"customer_id":10}
+
         response = self.app.put(
-            BASE_URL+"/"+str(10)+"/"+str(new_wishlist["id"])+"/"+str(item.product_id), content_type=CONTENT_TYPE_JSON
+            BASE_URL+"/"+str(new_wishlist["id"])+"/products/"+str(item.product_id),
+            json=req,
+            content_type=CONTENT_TYPE_JSON
         )
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)

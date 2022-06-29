@@ -12,17 +12,17 @@ This project template contains starter code for your class project. The `/servic
 ## Calls to the Wishlist
 
 These are the available REST API calls which are used for Wishlist.
-```
-Endpoint                  Methods  Rule
-------------------------  -------  ------------------------------------------------------
-create_wishlists          POST     /wishlists
-delete_wishlists          DELETE   /wishlists/<int:wishlist_id>
-get_wishlists             GET      /wishlists/<int:wishlist_id>
-index                     GET      /
-list_wishlists            GET      /wishlists
-update_wishlist_name      PUT      /wishlists/<int:wishlist_id>
-update_wishlist_products  PUT      /wishlists/<int:wishlist_id>/products/<int:product_id>
-```
+
+| Endpoint                 | Methods     | Rule                                                   |
+| ------------------------ | ----------- | ------------------------------------------------------ |
+| create_wishlists         | POST        | /wishlists                                             |
+| delete_wishlists         | DELETE      | /wishlists/<int:wishlist_id>                           |
+| get_wishlists            | GET         | /wishlists/<int:wishlist_id>                           |
+| index                    | GET         | /                                                      |
+| list_wishlists           | GET         | /wishlists                                             |
+| update_wishlist_name     | PUT         | /wishlists/<int:wishlist_id>                           |
+| update_wishlist_products | PUT         | /wishlists/<int:wishlist_id>/products/<int:product_id> |
+
 
 ## Contents
 

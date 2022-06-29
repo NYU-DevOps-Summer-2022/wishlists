@@ -20,7 +20,6 @@ delete_wishlists          DELETE   /wishlists/<int:wishlist_id>
 get_wishlists             GET      /wishlists/<int:wishlist_id>
 index                     GET      /
 list_wishlists            GET      /wishlists
-static                    GET      /static/<path:filename>
 update_wishlist_name      PUT      /wishlists/<int:customer_id>/<int:wishlist_id>
 update_wishlist_products  PUT      /wishlists/<int:customer_id>/<int:wishlist_id>/<int:product_id>
 ```

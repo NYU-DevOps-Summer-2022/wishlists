@@ -147,10 +147,10 @@ def update_wishlist_name(customer_id, wishlist_id):
 
     wishlists = Wishlist.find_by_customer_id(customer_id)
 
-    if not wishlists:
-        abort(status.HTTP_404_NOT_FOUND, f"Wishlist with customer id '{customer_id}' was not found.")
-
     results = [wishlist.serialize() for wishlist in wishlists]
+
+    if len(results) == 0:
+        abort(status.HTTP_404_NOT_FOUND, f"Wishlist with customer id '{customer_id}' was not found.")
 
     if not any(wishlist['id'] == wishlist_id for wishlist in results):
         abort(status.HTTP_404_NOT_FOUND, f"Wishlist with customer id '{customer_id}' and id '{wishlist_id}' was not found.")
@@ -178,10 +178,11 @@ def update_wishlist_products(customer_id, wishlist_id, product_id):
 
     wishlists = Wishlist.find_by_customer_id(customer_id)
 
-    if not wishlists:
+    results = [wishlist.serialize() for wishlist in wishlists]
+
+    if len(results) == 0:
         abort(status.HTTP_404_NOT_FOUND, f"Wishlist with customer id '{customer_id}' was not found.")
 
-    results = [wishlist.serialize() for wishlist in wishlists]
 
     if not any(wishlist['id'] == wishlist_id for wishlist in results):
         abort(status.HTTP_404_NOT_FOUND, f"Wishlist with customer id '{customer_id}' and id '{wishlist_id}' was not found.")

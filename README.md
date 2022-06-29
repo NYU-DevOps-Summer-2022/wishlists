@@ -18,7 +18,6 @@ Endpoint                  Methods  Rule
 create_wishlists          POST     /wishlists
 delete_wishlists          DELETE   /wishlists/<int:wishlist_id>
 get_wishlists             GET      /wishlists/<int:wishlist_id>
-get_wishlists_customerID  GET      /wishlists/customer/<int:customer_id>
 index                     GET      /
 list_wishlists            GET      /wishlists
 static                    GET      /static/<path:filename>

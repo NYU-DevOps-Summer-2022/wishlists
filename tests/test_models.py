@@ -5,7 +5,6 @@ Test cases for Wishlist Model
 import os
 import logging
 import unittest
-from sqlalchemy import true
 from werkzeug.exceptions import NotFound
 from service.models import Wishlist, Item, DataValidationError, db
 from service import app
@@ -14,6 +13,7 @@ from tests.factories import WishlistFactory
 DATABASE_URI = os.getenv(
     "DATABASE_URI", "postgresql://postgres:postgres@localhost:5432/testdb"
 )
+
 
 ######################################################################
 #  W I S H L I S T   M O D E L   T E S T   C A S E S
@@ -62,7 +62,6 @@ class TestWishlist(unittest.TestCase):
         self.assertEqual(wishlist.name, "AccessoriesList2")
         self.assertEqual(wishlist.customer_id, None)
 
-    
     def test_add_a_wishlist(self):
         """It should Create a wishlist and add it to the database"""
         wishlists = Wishlist.all()
@@ -96,7 +95,7 @@ class TestWishlist(unittest.TestCase):
         self.assertEqual(found_wishlist.id, wishlist.id)
         self.assertEqual(found_wishlist.name, wishlist.name)
         self.assertEqual(found_wishlist.customer_id, wishlist.customer_id)
-    
+
     def test_delete_a_wishlist(self):
         """It should Delete a Wishlist"""
         wishlist = WishlistFactory()
@@ -105,7 +104,7 @@ class TestWishlist(unittest.TestCase):
         # delete the wishlist and make sure it isn't in the database
         wishlist.delete()
         self.assertEqual(len(Wishlist.all()), 0)
-    
+
     def test_serialize_a_wishlist(self):
         """It should serialize a wishlist"""
         wishlist = WishlistFactory()
@@ -141,7 +140,7 @@ class TestWishlist(unittest.TestCase):
         data = "random data"
         wishlist = Wishlist()
         self.assertRaises(DataValidationError, wishlist.deserialize, data)
-    
+
     def test_deserialize_bad_available(self):
         """It should not deserialize a bad customer_id attribute"""
         test_wishlist = WishlistFactory()
@@ -155,7 +154,7 @@ class TestWishlist(unittest.TestCase):
         data["customer_id"] = False
         wishlist = Wishlist()
         self.assertRaises(DataValidationError, wishlist.deserialize, data)
-    
+
     def test_find_wishlist(self):
         """It should Find a wishlist by ID"""
         wishlists = WishlistFactory.create_batch(5)
@@ -188,7 +187,7 @@ class TestWishlist(unittest.TestCase):
         self.assertEqual(found.count(), 1)
         self.assertEqual(found[0].name, wishlists[3].name)
         self.assertEqual(found[0].customer_id, wishlists[3].customer_id)
-    
+
     def test_find_by_customer_id(self):
         """It should Find Wishlists by Customer_IDs"""
         wishlists = WishlistFactory.create_batch(10)
@@ -201,7 +200,7 @@ class TestWishlist(unittest.TestCase):
         self.assertEqual(found.count(), count)
         for wishlist in found:
             self.assertEqual(wishlist.customer_id, customer_id)
-    
+
     def test_find_or_404_found(self):
         """It should Find or return 404 not found"""
         wishlists = WishlistFactory.create_batch(10)
@@ -218,6 +217,7 @@ class TestWishlist(unittest.TestCase):
     def test_find_or_404_not_found(self):
         """It should return 404 not found"""
         self.assertRaises(NotFound, Wishlist.find_or_404, 0)
+
 
 ######################################################################
 #  I T E M   M O D E L   T E S T   C A S E S

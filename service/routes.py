@@ -6,19 +6,13 @@ Paths:
 POST /wishlists - creates a new Wishlist record in the database
 """
 
-import os
-import sys
-import logging
-from flask import Flask, jsonify, request, url_for, make_response, abort
+from flask import jsonify, request, url_for, abort
 from service.utils import status  # HTTP Status Codes
-
-# For this example we'll use SQLAlchemy, a popular ORM that supports a
-# variety of backends including SQLite, MySQL, and PostgreSQL
-from flask_sqlalchemy import SQLAlchemy
-from service.models import Wishlist, Item, DataValidationError
+from service.models import Wishlist, Item
 
 # Import Flask application
 from . import app
+
 
 ######################################################################
 # GET INDEX
@@ -35,6 +29,7 @@ def index():
         ),
         status.HTTP_200_OK,
     )
+
 
 ######################################################################
 # LIST ALL WISHLISTS
@@ -57,6 +52,7 @@ def list_wishlists():
     app.logger.info("Returning %d wishlists", len(results))
     return jsonify(results), status.HTTP_200_OK
 
+
 ######################################################################
 # RETRIEVE A WISHLIST
 ######################################################################
@@ -74,6 +70,7 @@ def get_wishlists(wishlist_id):
 
     app.logger.info("Returning wishlist: %s", wishlist.name)
     return jsonify(wishlist.serialize()), status.HTTP_200_OK
+
 
 ######################################################################
 # RETRIEVE WISHLISTS OF A CUSTOMER
@@ -93,6 +90,7 @@ def get_wishlists_customerID(customer_id):
     results = [wishlist.serialize() for wishlist in wishlists]
     app.logger.info("Returning %s wishlist", len(results))
     return jsonify(results), status.HTTP_200_OK
+
 
 ######################################################################
 # ADD A NEW WISHLIST
@@ -114,6 +112,7 @@ def create_wishlists():
     app.logger.info("Wishlist with ID [%s] created.", wishlist.id)
     return jsonify(message), status.HTTP_201_CREATED, {"Location": location_url}
 
+
 ######################################################################
 # DELETE A WISHLIST
 ######################################################################
@@ -131,6 +130,7 @@ def delete_wishlists(wishlist_id):
 
     app.logger.info("Wishlist with ID [%s] delete complete.", wishlist_id)
     return "", status.HTTP_204_NO_CONTENT
+
 
 @app.route("/wishlists/<int:customer_id>/<int:wishlist_id>", methods=["PUT"])
 def update_wishlist_name(customer_id, wishlist_id):
@@ -163,6 +163,7 @@ def update_wishlist_name(customer_id, wishlist_id):
 
     return jsonify(message), status.HTTP_200_OK
 
+
 @app.route("/wishlists/<int:customer_id>/<int:wishlist_id>/<int:product_id>", methods=["PUT"])
 def update_wishlist_products(customer_id, wishlist_id, product_id):
     """
@@ -183,7 +184,6 @@ def update_wishlist_products(customer_id, wishlist_id, product_id):
     if len(results) == 0:
         abort(status.HTTP_404_NOT_FOUND, f"Wishlist with customer id '{customer_id}' was not found.")
 
-
     if not any(wishlist['id'] == wishlist_id for wishlist in results):
         abort(status.HTTP_404_NOT_FOUND, f"Wishlist with customer id '{customer_id}' and id '{wishlist_id}' was not found.")
 
@@ -202,6 +202,7 @@ def update_wishlist_products(customer_id, wishlist_id, product_id):
 
     return jsonify(message), status.HTTP_201_CREATED
 
+
 ######################################################################
 #  U T I L I T Y   F U N C T I O N S
 ######################################################################
@@ -211,6 +212,7 @@ def init_db():
     """ Initializes the SQLAlchemy app """
     global app
     Wishlist.init_db(app)
+
 
 def check_content_type(media_type):
     """Checks that the media type is correct"""
@@ -222,4 +224,3 @@ def check_content_type(media_type):
         status.HTTP_415_UNSUPPORTED_MEDIA_TYPE,
         "Content-Type must be {}".format(media_type),
     )
-

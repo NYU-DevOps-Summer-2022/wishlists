@@ -253,3 +253,21 @@ class Item(db.Model):
         """
         logger.info("Processing category query for wishlist_id %s ...", wishlist_id)
         return cls.query.filter(cls.wishlist_id == wishlist_id)
+
+
+    @classmethod
+    def find_by_wishlist_id_and_item_id(cls, wishlist_id: int, item_id: int) -> list:
+        """Returns the item with wishlist_id and product_id
+
+        :param wishlist_id: the wishlist_id of the Wishlist you want to match
+        :type wishlist_id: int
+
+        :param item_id
+        :type item_id: int
+
+        :return: a collection of wishlist items
+        :rtype: list
+
+        """
+        logger.info("Processing category query for wishlist_id %s ... item_id %s", wishlist_id, item_id)
+        return cls.query.filter(cls.id == item_id, cls.wishlist_id == wishlist_id)

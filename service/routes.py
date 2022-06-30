@@ -78,6 +78,28 @@ def get_wishlists(wishlist_id):
 
 
 ######################################################################
+# RETRIEVE A WISHLIST'S ITEMS
+######################################################################
+@app.route("/wishlists/<int:wishlist_id>/items", methods=["GET"])
+def get_wishlists_items(wishlist_id):
+    """
+    Retrieve a Wishlist's items
+
+    This endpoint will return a Wishlist's items based on it's id
+    """
+    app.logger.info("Request for wishlist items with wishlist_id: %s", wishlist_id)
+    wishlist = Wishlist.find(wishlist_id)
+    if not wishlist:
+        abort(status.HTTP_404_NOT_FOUND, f"Wishlist with id '{wishlist_id}' was not found.")
+
+    app.logger.info("Returning wishlist: %s", wishlist.name)
+
+    response = [item.serialize() for item in Item.find_by_wishlist_id(wishlist_id)]
+
+    return jsonify(response), status.HTTP_200_OK
+
+
+######################################################################
 # RETRIEVE WISHLISTS OF A CUSTOMER
 ######################################################################
 @app.route("/wishlists/customer/<int:customer_id>", methods=["GET"])

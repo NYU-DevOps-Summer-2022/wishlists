@@ -117,9 +117,45 @@ class TestWishlistServer(TestCase):
         self.assertEqual(data["items"][0]["wishlist_id"], item.wishlist_id)
         self.assertEqual(data["items"][0]["product_id"], item.product_id)
 
+    def test_get_wishlist_items(self):
+        """It should Get a single Wishlist's items"""
+        # get the id of a wishlist
+        test_wishlist = self._create_wishlists(1)[0]
+
+        item = ItemFactory()
+        item.wishlist_id = test_wishlist.id
+
+        req = {"customer_id":test_wishlist.customer_id}
+
+        response = self.app.put(
+            BASE_URL+"/"+str(test_wishlist.id)+"/products/"+str(item.product_id),
+            json=req,
+            content_type=CONTENT_TYPE_JSON
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        items = Item.find_by_wishlist_id(test_wishlist.id)
+        self.assertEqual(1, len([item.serialize() for item in items]))
+
+        response = self.app.get(f"{BASE_URL}/{test_wishlist.id}/items")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = response.get_json()
+        self.assertIsNotNone(data[0]["id"])
+        self.assertEqual(data[0]["wishlist_id"], item.wishlist_id)
+        self.assertEqual(data[0]["product_id"], item.product_id)
+
     def test_get_wishlist_not_found(self):
         """It should not Get a wishlist thats not found"""
         response = self.app.get(f"{BASE_URL}/0")
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        data = response.get_json()
+        logging.debug("Response data = %s", data)
+        self.assertIn("was not found", data["message"])
+
+    def test_get_wishlist_items_not_found(self):
+        """It should not Get a wishlist's items thats not found"""
+        response = self.app.get(f"{BASE_URL}/0/items")
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
         data = response.get_json()
         logging.debug("Response data = %s", data)

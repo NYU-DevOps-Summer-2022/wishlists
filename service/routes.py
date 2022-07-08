@@ -78,6 +78,52 @@ def get_wishlists(wishlist_id):
 
 
 ######################################################################
+# RETRIEVE A WISHLIST'S ITEMS
+######################################################################
+@app.route("/wishlists/<int:wishlist_id>/items", methods=["GET"])
+def get_wishlists_items(wishlist_id):
+    """
+    Retrieve a Wishlist's items
+
+    This endpoint will return a Wishlist's items based on it's id
+    """
+    app.logger.info("Request for wishlist items with wishlist_id: %s", wishlist_id)
+    wishlist = Wishlist.find(wishlist_id)
+    if not wishlist:
+        abort(status.HTTP_404_NOT_FOUND, f"Wishlist with id '{wishlist_id}' was not found.")
+
+    app.logger.info("Returning wishlist: %s", wishlist.name)
+
+    response = [item.serialize() for item in Item.find_by_wishlist_id(wishlist_id)]
+
+    return jsonify(response), status.HTTP_200_OK
+
+######################################################################
+# RETRIEVE A WISHLIST'S ITEM BY ID
+######################################################################
+@app.route("/wishlists/<int:wishlist_id>/items/<int:item_id>", methods=["GET"])
+def get_wishlists_item_by_id(wishlist_id, item_id):
+    """
+    Retrieve a Wishlist's items
+
+    This endpoint will return a Wishlist's items based on it's id
+    """
+    app.logger.info("Request for wishlist items with wishlist_id: %s", wishlist_id)
+    wishlist = Wishlist.find(wishlist_id)
+    if not wishlist:
+        abort(status.HTTP_404_NOT_FOUND, f"Wishlist with id '{wishlist_id}' was not found.")
+
+    app.logger.info("Returning wishlist: %s", wishlist.name)
+
+    response = [item.serialize() for item in Item.find_by_wishlist_id_and_item_id(wishlist_id, item_id)]
+
+    if len(response) == 0:
+        abort(status.HTTP_404_NOT_FOUND, f"Wishlist with id '{wishlist_id}' was not found with item '{item_id}'")
+
+    return jsonify(response[0]), status.HTTP_200_OK
+
+
+######################################################################
 # RETRIEVE WISHLISTS OF A CUSTOMER
 ######################################################################
 @app.route("/wishlists/customer/<int:customer_id>", methods=["GET"])
@@ -132,11 +178,6 @@ def delete_wishlists(wishlist_id):
     wishlist = Wishlist.find(wishlist_id)
     if wishlist:
         wishlist.delete()
-
-        items = Item.find_by_wishlist_id(wishlist_id)
-
-        for item in items:
-            item.delete()
 
     app.logger.info("Wishlist with ID [%s] delete complete.", wishlist_id)
     return "", status.HTTP_204_NO_CONTENT

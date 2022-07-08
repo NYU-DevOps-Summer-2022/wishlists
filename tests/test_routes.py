@@ -271,7 +271,7 @@ class TestWishlistServer(TestCase):
 
         # To check the item has been deleted
         response = self.app.get(f"{BASE_URL}/{test_wishlist.id}/items/{result['id']}")
-        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_delete_wishlist(self):
         """It should Delete a Wishlist"""

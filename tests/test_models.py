@@ -95,7 +95,6 @@ class TestWishlist(unittest.TestCase):
         self.assertEqual(found_wishlist.id, wishlist.id)
         self.assertEqual(found_wishlist.name, wishlist.name)
         self.assertEqual(found_wishlist.customer_id, wishlist.customer_id)
-      
 
     def test_delete_a_wishlist(self):
         """It should Delete a Wishlist"""
@@ -302,7 +301,6 @@ class TestItem(unittest.TestCase):
 
         self.assertGreater(len(results), 0)
 
-
     def test_delete_wishlist_item(self):
         """It should Delete a Wishlist Item"""
         wishlists = Wishlist.all()
@@ -326,4 +324,3 @@ class TestItem(unittest.TestCase):
         wishlists = Wishlist.find_by_customer_id(wishlist.customer_id)
         for wishlist in wishlists:
             self.assertEqual(len(wishlist.items), 0)
-

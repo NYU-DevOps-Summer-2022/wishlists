@@ -106,6 +106,7 @@ def get_wishlists_items(wishlist_id):
 
     return jsonify(response), status.HTTP_200_OK
 
+
 ######################################################################
 # RETRIEVE A WISHLIST'S ITEM BY ID
 ######################################################################

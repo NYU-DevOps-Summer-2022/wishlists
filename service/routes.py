@@ -6,7 +6,7 @@ Paths:
 POST /wishlists - creates a new Wishlist record in the database
 """
 
-from flask import jsonify, request, url_for, abort
+from flask import jsonify, request, url_for, abort, make_response
 from service.utils import status  # HTTP Status Codes
 from service.models import Wishlist, Item
 
@@ -221,6 +221,26 @@ def update_wishlist_products(wishlist_id, product_id):
     message = item.serialize()
 
     return jsonify(message), status.HTTP_201_CREATED
+
+
+######################################################################
+# DELETE A WISHLIST ITEM
+######################################################################
+@app.route("/wishlists/<int:wishlist_id>/items/<int:item_id>", methods=["DELETE"])
+def delete_wishlist_item(wishlist_id, item_id):
+    """
+    Delete a Wishlist Item
+    This endpoint will delete a Product based on the product id
+    """
+    app.logger.info(
+        "Request to delete Product %s for Wishlist id: %s", (item_id, wishlist_id)
+    )
+
+    product = Item.find_by_wishlist_id_and_item_id(wishlist_id, item_id)
+    if product:
+        product.delete()
+
+    return make_response("", status.HTTP_204_NO_CONTENT)
 
 
 ######################################################################

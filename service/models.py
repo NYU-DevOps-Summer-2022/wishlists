@@ -18,7 +18,7 @@ def init_db(app):
 
 
 class DataValidationError(Exception):
-    """ Used for an data validation errors when deserializing """
+    """Used for an data validation errors when deserializing"""
 
     pass
 
@@ -35,7 +35,7 @@ class Wishlist(db.Model):
     name = db.Column(db.String(63), nullable=False)
     customer_id = db.Column(db.Integer, nullable=False)
 
-    items = db.relationship('Item', backref='wishlist', passive_deletes=True)
+    items = db.relationship("Item", backref="wishlist", passive_deletes=True)
 
     ##################################################
     # INSTANCE METHODS
@@ -61,18 +61,14 @@ class Wishlist(db.Model):
         db.session.commit()
 
     def delete(self):
-        """ Removes a Wishlist from the data store """
+        """Removes a Wishlist from the data store"""
         logger.info("Deleting %s", self.name)
         db.session.delete(self)
         db.session.commit()
 
     def serialize(self):
-        """ Serializes a Wishlist into a dictionary """
-        return {
-            "id": self.id,
-            "name": self.name,
-            "customer_id": self.customer_id
-        }
+        """Serializes a Wishlist into a dictionary"""
+        return {"id": self.id, "name": self.name, "customer_id": self.customer_id}
 
     def deserialize(self, data):
         """
@@ -83,16 +79,25 @@ class Wishlist(db.Model):
         """
         try:
             self.name = data["name"]
-            if isinstance(data["customer_id"], int) and type(data["customer_id"]) != bool:
+            if (
+                isinstance(data["customer_id"], int)
+                and type(data["customer_id"]) != bool
+            ):
                 self.customer_id = data["customer_id"]
             else:
-                raise DataValidationError("Invalid type for integer [customer_id]: " + str(type(data["customer_id"])))
+                raise DataValidationError(
+                    "Invalid type for integer [customer_id]: "
+                    + str(type(data["customer_id"]))
+                )
         except AttributeError as error:
             raise DataValidationError("Invalid attribute: " + error.args[0])
         except KeyError as error:
             raise DataValidationError("Invalid Wishlist: missing " + error.args[0])
         except TypeError as error:
-            raise DataValidationError("Invalid Wishlist: body of request contained bad or no data" + str(error))
+            raise DataValidationError(
+                "Invalid Wishlist: body of request contained bad or no data"
+                + str(error)
+            )
         return self
 
     ##################################################
@@ -101,7 +106,7 @@ class Wishlist(db.Model):
 
     @classmethod
     def init_db(cls, app):
-        """ Initializes the database session """
+        """Initializes the database session"""
         logger.info("Initializing database")
         cls.app = app
         # This is where we initialize SQLAlchemy from the Flask app
@@ -111,13 +116,13 @@ class Wishlist(db.Model):
 
     @classmethod
     def all(cls):
-        """ Returns all of the Wishlists in the database """
+        """Returns all of the Wishlists in the database"""
         logger.info("Processing all Wishlists")
         return cls.query.all()
 
     @classmethod
     def find(cls, by_id: int):
-        """ Finds a Wishlist by it's ID """
+        """Finds a Wishlist by it's ID"""
         logger.info("Processing lookup for id %s ...", by_id)
         return cls.query.get(by_id)
 
@@ -167,33 +172,43 @@ class Item(db.Model):
 
     # Table Schema
     id = db.Column(db.Integer, primary_key=True)
-    wishlist_id = db.Column(db.Integer, db.ForeignKey('wishlist.id', ondelete='CASCADE'), nullable=False)
+    wishlist_id = db.Column(
+        db.Integer, db.ForeignKey("wishlist.id", ondelete="CASCADE"), nullable=False
+    )
     product_id = db.Column(db.Integer, nullable=False)
 
     def __repr__(self):
-        return "<Item id=[%s] wishlist_id=[%s] product_id=[%s]>" % (self.id, self.wishlist_id, self.product_id)
+        return "<Item id=[%s] wishlist_id=[%s] product_id=[%s]>" % (
+            self.id,
+            self.wishlist_id,
+            self.product_id,
+        )
 
     def create(self):
         """
         Creates a Wishlist to the database
         """
-        logger.info("Creating wishlist_id=[%s] product_id=[%s]", self.wishlist_id, self.product_id)
+        logger.info(
+            "Creating wishlist_id=[%s] product_id=[%s]",
+            self.wishlist_id,
+            self.product_id,
+        )
         self.id = None  # id must be none to generate next primary key
         db.session.add(self)
         db.session.commit()
 
     def delete(self):
-        """ Removes a Wishlist item from the data store """
+        """Removes a Wishlist item from the data store"""
         logger.info("Deleting %s", self.id)
         db.session.delete(self)
         db.session.commit()
 
     def serialize(self):
-        """ Serializes a Wishlist into a dictionary """
+        """Serializes a Wishlist into a dictionary"""
         return {
             "id": self.id,
             "wishlist_id": self.wishlist_id,
-            "product_id": self.product_id
+            "product_id": self.product_id,
         }
 
     def deserialize(self, wishlist_id, product_id):
@@ -217,7 +232,7 @@ class Item(db.Model):
 
     @classmethod
     def init_db(cls, app):
-        """ Initializes the database session """
+        """Initializes the database session"""
         logger.info("Initializing database")
         cls.app = app
         # This is where we initialize SQLAlchemy from the Flask app
@@ -226,7 +241,9 @@ class Item(db.Model):
         db.create_all()  # make our SQLAlchemy tables
 
     @classmethod
-    def find_by_wishlist_id_and_product_id(cls, wishlist_id: int, product_id: int) -> list:
+    def find_by_wishlist_id_and_product_id(
+        cls, wishlist_id: int, product_id: int
+    ) -> list:
         """Returns the item with wishlist_id and product_id
 
         :param wishlist_id: the wishlist_id of the Wishlist you want to match
@@ -239,8 +256,14 @@ class Item(db.Model):
         :rtype: list
 
         """
-        logger.info("Processing category query for wishlist_id %s and product_id %s ...", wishlist_id, product_id)
-        return cls.query.filter(cls.wishlist_id == wishlist_id, cls.product_id == product_id)
+        logger.info(
+            "Processing category query for wishlist_id %s and product_id %s ...",
+            wishlist_id,
+            product_id,
+        )
+        return cls.query.filter(
+            cls.wishlist_id == wishlist_id, cls.product_id == product_id
+        )
 
     @classmethod
     def find_by_wishlist_id(cls, wishlist_id: int) -> list:
@@ -256,7 +279,6 @@ class Item(db.Model):
         logger.info("Processing category query for wishlist_id %s ...", wishlist_id)
         return cls.query.filter(cls.wishlist_id == wishlist_id)
 
-
     @classmethod
     def find_by_wishlist_id_and_item_id(cls, wishlist_id: int, item_id: int) -> list:
         """Returns the item with wishlist_id and product_id
@@ -271,5 +293,9 @@ class Item(db.Model):
         :rtype: list
 
         """
-        logger.info("Processing category query for wishlist_id %s ... item_id %s", wishlist_id, item_id)
+        logger.info(
+            "Processing category query for wishlist_id %s ... item_id %s",
+            wishlist_id,
+            item_id,
+        )
         return cls.query.filter(cls.id == item_id, cls.wishlist_id == wishlist_id)

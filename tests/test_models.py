@@ -8,7 +8,7 @@ import unittest
 from werkzeug.exceptions import NotFound
 from service.models import Wishlist, Item, DataValidationError, db
 from service import app
-from tests.factories import WishlistFactory
+from tests.factories import WishlistFactory, ItemFactory
 
 DATABASE_URI = os.getenv(
     "DATABASE_URI", "postgresql://postgres:postgres@localhost:5432/testdb"
@@ -19,11 +19,11 @@ DATABASE_URI = os.getenv(
 #  W I S H L I S T   M O D E L   T E S T   C A S E S
 ######################################################################
 class TestWishlist(unittest.TestCase):
-    """ Test Cases for Wishlist Model """
+    """Test Cases for Wishlist Model"""
 
     @classmethod
     def setUpClass(cls):
-        """ This runs once before the entire test suite """
+        """This runs once before the entire test suite"""
         app.config["TESTING"] = True
         app.config["DEBUG"] = False
         app.config["SQLALCHEMY_DATABASE_URI"] = DATABASE_URI
@@ -32,16 +32,16 @@ class TestWishlist(unittest.TestCase):
 
     @classmethod
     def tearDownClass(cls):
-        """ This runs once after the entire test suite """
+        """This runs once after the entire test suite"""
         db.session.close()
 
     def setUp(self):
-        """ This runs before each test """
+        """This runs before each test"""
         db.session.query(Wishlist).delete()  # clean up the last tests
         db.session.commit()
 
     def tearDown(self):
-        """ This runs after each test """
+        """This runs after each test"""
         db.session.remove()
 
     ######################################################################
@@ -95,6 +95,7 @@ class TestWishlist(unittest.TestCase):
         self.assertEqual(found_wishlist.id, wishlist.id)
         self.assertEqual(found_wishlist.name, wishlist.name)
         self.assertEqual(found_wishlist.customer_id, wishlist.customer_id)
+      
 
     def test_delete_a_wishlist(self):
         """It should Delete a Wishlist"""
@@ -195,7 +196,9 @@ class TestWishlist(unittest.TestCase):
             wishlist.create()
         logging.debug(wishlists)
         customer_id = wishlists[0].customer_id
-        count = len([wishlist for wishlist in wishlists if wishlist.customer_id == customer_id])
+        count = len(
+            [wishlist for wishlist in wishlists if wishlist.customer_id == customer_id]
+        )
         found = Wishlist.find_by_customer_id(customer_id)
         self.assertEqual(found.count(), count)
         for wishlist in found:
@@ -223,11 +226,11 @@ class TestWishlist(unittest.TestCase):
 #  I T E M   M O D E L   T E S T   C A S E S
 ######################################################################
 class TestItem(unittest.TestCase):
-    """ Test Cases for Item Model """
+    """Test Cases for Item Model"""
 
     @classmethod
     def setUpClass(cls):
-        """ This runs once before the entire test suite """
+        """This runs once before the entire test suite"""
         app.config["TESTING"] = True
         app.config["DEBUG"] = False
         app.config["SQLALCHEMY_DATABASE_URI"] = DATABASE_URI
@@ -236,16 +239,16 @@ class TestItem(unittest.TestCase):
 
     @classmethod
     def tearDownClass(cls):
-        """ This runs once after the entire test suite """
+        """This runs once after the entire test suite"""
         db.session.close()
 
     def setUp(self):
-        """ This runs before each test """
+        """This runs before each test"""
         db.session.query(Wishlist).delete()  # clean up the last tests
         db.session.commit()
 
     def tearDown(self):
-        """ This runs after each test """
+        """This runs after each test"""
         db.session.remove()
 
     ######################################################################
@@ -280,7 +283,7 @@ class TestItem(unittest.TestCase):
 
         self.assertGreater(len(results), 0)
 
-    def test_find_by_wishlist_id_and_product_id(self):
+    def test_find_by_wishlist_id_and_item_id(self):
         """It should find wishlist items by wishlist id and item id"""
         wishlist = WishlistFactory()
         logging.debug(wishlist)
@@ -298,3 +301,28 @@ class TestItem(unittest.TestCase):
         results = [item.serialize() for item in items]
 
         self.assertGreater(len(results), 0)
+
+
+    # def test_delete_wishlist_item(self):
+    #     """It should Delete a Wishlist Item"""
+    #     wishlists = Wishlist.all()
+    #     self.assertEqual(wishlists, [])
+
+    #     wishlist = WishlistFactory()
+    #     product = ItemFactory(wishlist=wishlist)
+    #     wishlist.create()
+    #     # Assert that it was assigned an id and shows up in the database
+    #     self.assertIsNotNone(wishlist.id)
+    #     wishlists = Wishlist.all()
+    #     self.assertEqual(len(wishlists), 1)
+
+    #     # Fetch it back
+    #     wishlist = wishlist.find_by_customer_id(wishlist.customer_id)
+    #     product = wishlist.items[0]
+    #     product.delete()
+    #     wishlist.update()
+
+    #     # Fetch it back again
+    #     wishlist = Wishlist.find_by_customer_id(wishlist.customer_id)
+    #     self.assertEqual(len(wishlist.items), 0)
+

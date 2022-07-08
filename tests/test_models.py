@@ -303,26 +303,27 @@ class TestItem(unittest.TestCase):
         self.assertGreater(len(results), 0)
 
 
-    # def test_delete_wishlist_item(self):
-    #     """It should Delete a Wishlist Item"""
-    #     wishlists = Wishlist.all()
-    #     self.assertEqual(wishlists, [])
+    def test_delete_wishlist_item(self):
+        """It should Delete a Wishlist Item"""
+        wishlists = Wishlist.all()
+        self.assertEqual(wishlists, [])
 
-    #     wishlist = WishlistFactory()
-    #     product = ItemFactory(wishlist=wishlist)
-    #     wishlist.create()
-    #     # Assert that it was assigned an id and shows up in the database
-    #     self.assertIsNotNone(wishlist.id)
-    #     wishlists = Wishlist.all()
-    #     self.assertEqual(len(wishlists), 1)
+        wishlist = WishlistFactory()
+        product = ItemFactory(wishlist=wishlist)
+        wishlist.create()
+        # Assert that it was assigned an id and shows up in the database
+        self.assertIsNotNone(wishlist.id)
+        wishlists = Wishlist.all()
+        self.assertEqual(len(wishlists), 1)
 
-    #     # Fetch it back
-    #     wishlist = wishlist.find_by_customer_id(wishlist.customer_id)
-    #     product = wishlist.items[0]
-    #     product.delete()
-    #     wishlist.update()
+        # Fetch it back
+        wishlists = Wishlist.find_by_customer_id(wishlist.customer_id)
+        for wishlist in wishlists:
+            product = wishlist.items[0]
+            product.delete()
 
-    #     # Fetch it back again
-    #     wishlist = Wishlist.find_by_customer_id(wishlist.customer_id)
-    #     self.assertEqual(len(wishlist.items), 0)
+        # Fetch it back again
+        wishlists = Wishlist.find_by_customer_id(wishlist.customer_id)
+        for wishlist in wishlists:
+            self.assertEqual(len(wishlist.items), 0)
 

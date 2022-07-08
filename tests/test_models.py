@@ -263,12 +263,18 @@ class TestItem(unittest.TestCase):
 
     def test_find_by_wishlist_id_and_product_id(self):
         """It should find wishlist items by wishlist id and product id"""
-        item = Item(wishlist_id=1, product_id=10)
+        wishlist = WishlistFactory()
+        logging.debug(wishlist)
+        wishlist.id = None
+        wishlist.create()
+        self.assertIsNotNone(wishlist.id)
+
+        item = Item(wishlist_id=wishlist.id, product_id=10)
         item.create()
 
         logging.debug(item)
 
-        items = Item.find_by_wishlist_id_and_product_id(1, 10)
+        items = Item.find_by_wishlist_id_and_product_id(wishlist.id, 10)
 
         results = [item.serialize() for item in items]
 

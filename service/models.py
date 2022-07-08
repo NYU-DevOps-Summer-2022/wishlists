@@ -35,6 +35,8 @@ class Wishlist(db.Model):
     name = db.Column(db.String(63), nullable=False)
     customer_id = db.Column(db.Integer, nullable=False)
 
+    items = db.relationship('Item', backref='wishlist', passive_deletes=True)
+
     ##################################################
     # INSTANCE METHODS
     ##################################################
@@ -165,7 +167,7 @@ class Item(db.Model):
 
     # Table Schema
     id = db.Column(db.Integer, primary_key=True)
-    wishlist_id = db.Column(db.Integer, nullable=False)
+    wishlist_id = db.Column(db.Integer, db.ForeignKey('wishlist.id', ondelete='CASCADE'), nullable=False)
     product_id = db.Column(db.Integer, nullable=False)
 
     def __repr__(self):

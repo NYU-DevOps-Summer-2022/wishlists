@@ -133,11 +133,6 @@ def delete_wishlists(wishlist_id):
     if wishlist:
         wishlist.delete()
 
-        items = Item.find_by_wishlist_id(wishlist_id)
-
-        for item in items:
-            item.delete()
-
     app.logger.info("Wishlist with ID [%s] delete complete.", wishlist_id)
     return "", status.HTTP_204_NO_CONTENT
 

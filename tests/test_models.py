@@ -279,3 +279,16 @@ class TestItem(unittest.TestCase):
         results = [item.serialize() for item in items]
 
         self.assertGreater(len(results), 0)
+
+    def test_find_by_wishlist_id_and_product_id(self):
+        """It should find wishlist items by wishlist id and item id"""
+        item = Item(wishlist_id=1, product_id=10)
+        item.create()
+
+        logging.debug(item)
+
+        items = Item.find_by_wishlist_id_and_item_id(1, item.id)
+
+        results = [item.serialize() for item in items]
+
+        self.assertGreater(len(results), 0)

@@ -247,8 +247,8 @@ def update_wishlist_name(wishlist_id):
     return jsonify(message), status.HTTP_200_OK
 
 
-@app.route("/wishlists/<int:wishlist_id>/products/<int:product_id>", methods=["PUT"])
-def update_wishlist_products(wishlist_id, product_id):
+@app.route("/wishlists/<int:wishlist_id>/items", methods=["POST"])
+def update_wishlist_products(wishlist_id):
     """
     Updates a Wishlist, adds products
     This endpoint will add a new product to a wishlist
@@ -261,6 +261,7 @@ def update_wishlist_products(wishlist_id, product_id):
 
     # TODO : validate param
     customer_id = req["customer_id"]
+    product_id = req["product_id"]
 
     wishlists = []
     app.logger.info("Request for wishlists with customer id: %s", customer_id)

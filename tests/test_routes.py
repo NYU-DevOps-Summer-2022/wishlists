@@ -260,6 +260,39 @@ class TestWishlistServer(TestCase):
         for wishlist in data:
             self.assertEqual(wishlist["customer_id"], test_customer_id)
 
+    def test_delete_wishlist_item(self):
+        """It should Delete a Wishlist Item"""
+        test_wishlist = self._create_wishlists(1)[0]
+        item = ItemFactory()
+        item.wishlist_id = test_wishlist.id
+
+        req = {"customer_id": test_wishlist.customer_id}
+
+        response = self.app.put(
+            BASE_URL
+            + "/"
+            + str(test_wishlist.id)
+            + "/products/"
+            + str(item.product_id),
+            json=req,
+            content_type=CONTENT_TYPE_JSON,
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        items = Item.find_by_wishlist_id(test_wishlist.id)
+        result = [item.serialize() for item in items][0]
+
+        # delete an item request
+        response = self.app.delete(
+            f"{BASE_URL}/{test_wishlist.id}/items/{result['id']}"
+        )
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
+        # To check the item has been deleted
+        response = self.app.get(f"{BASE_URL}/{test_wishlist.id}/items/{result['id']}")
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
     def test_delete_wishlist(self):
         """It should Delete a Wishlist"""
         test_wishlist = self._create_wishlists(1)[0]

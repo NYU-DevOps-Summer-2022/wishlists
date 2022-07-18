@@ -141,6 +141,27 @@ class Wishlist(db.Model):
         return cls.query.get_or_404(wishlist_id)
 
     @classmethod
+    def find_by_param(cls, query):
+        """Returns all Wishlists with the given name
+
+        Args:
+            query (dict): contains the key value pairs of the query
+        """
+        logger.info("Processing query for %s ...", str(query))
+
+        result = None
+
+        if query["name"] and query["customer_id"]:
+            result = cls.query.filter(
+                cls.name == query["name"], cls.customer_id == query["customer_id"]
+            )
+        elif query["name"]:
+            result = cls.query.filter(cls.name == query["name"])
+        elif query["customer_id"]:
+            result = cls.query.filter(cls.customer_id == query["customer_id"])
+        return result
+
+    @classmethod
     def find_by_name(cls, name):
         """Returns all Wishlists with the given name
 

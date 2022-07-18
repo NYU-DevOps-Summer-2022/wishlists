@@ -53,7 +53,7 @@ def list_wishlists():
         wishlists = Wishlist.all()
 
     results = []
-    if wishlists != None:
+    if wishlists is not None:
         results = [wishlist.serialize() for wishlist in wishlists]
     app.logger.info("Returning %d wishlists", len(results))
 

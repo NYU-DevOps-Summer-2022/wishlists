@@ -20,3 +20,11 @@ test: ## Run the unit tests
 run: ## Run the service
 	$(info Starting service...)
 	honcho start
+
+.PHONY: login
+login: ## Login to IBM Cloud using yur api key
+	$(info Logging into IBM Cloud cluster $(CLUSTER)...)
+	ibmcloud login -a cloud.ibm.com -g Default -r us-south --apikey ~/.bluemix/apikey.json
+	ibmcloud cr login
+	ibmcloud ks cluster config --cluster $(CLUSTER)
+	kubectl cluster-info

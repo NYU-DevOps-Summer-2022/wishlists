@@ -204,6 +204,9 @@ def delete_wishlists(wishlist_id):
     return "", status.HTTP_204_NO_CONTENT
 
 
+######################################################################
+# UPDATE WISHLIST NAME
+######################################################################
 @app.route("/wishlists/<int:wishlist_id>", methods=["PUT"])
 def update_wishlist_name(wishlist_id):
     """
@@ -247,14 +250,17 @@ def update_wishlist_name(wishlist_id):
     return jsonify(message), status.HTTP_200_OK
 
 
+######################################################################
+# CREATE WISHLIST ITEM
+######################################################################
 @app.route("/wishlists/<int:wishlist_id>/items", methods=["POST"])
-def update_wishlist_products(wishlist_id):
+def create_wishlist_items(wishlist_id):
     """
     Updates a Wishlist, adds products
     This endpoint will add a new product to a wishlist
     """
 
-    app.logger.info("Request to update a wishlist")
+    app.logger.info("Request to create a wishlist item")
     check_content_type("application/json")
 
     req = request.get_json()
@@ -296,6 +302,64 @@ def update_wishlist_products(wishlist_id):
     message = item.serialize()
 
     return jsonify(message), status.HTTP_201_CREATED
+
+
+######################################################################
+# UPDATE WISHLIST ITEM
+######################################################################
+@app.route("/wishlists/<int:wishlist_id>/items/<int:item_id>", methods=["PUT"])
+def update_wishlist_items(wishlist_id, item_id):
+    """
+    Updates a wishlist item
+    """
+
+    app.logger.info("Request to update a wishlist item")
+    check_content_type("application/json")
+
+    req = request.get_json()
+
+    # TODO : validate param
+    customer_id = req["customer_id"]
+    product_id = req["product_id"]
+
+    wishlists = []
+    app.logger.info("Request for wishlists with customer id: %s", customer_id)
+
+    wishlists = Wishlist.find_by_customer_id(customer_id)
+
+    results = [wishlist.serialize() for wishlist in wishlists]
+
+    if len(results) == 0:
+        abort(
+            status.HTTP_404_NOT_FOUND,
+            f"Wishlist with customer id '{customer_id}' was not found.",
+        )
+
+    if not any(wishlist["id"] == wishlist_id for wishlist in results):
+        abort(
+            status.HTTP_404_NOT_FOUND,
+            f"Wishlist with customer id '{customer_id}' and id '{wishlist_id}' was not found.",
+        )
+
+    items = Item.find_by_wishlist_id_and_item_id(wishlist_id, item_id)
+
+    message = ""
+
+    results = [item.deserialize(wishlist_id, product_id) for item in items]
+
+    if len(results) > 0:
+        item = results[0]
+        item.update()
+
+        message = item.serialize()
+
+    else:
+        abort(
+            status.HTTP_404_NOT_FOUND,
+            f"Wishlist item {item_id} not found",
+        )
+
+    return jsonify(message), status.HTTP_200_OK
 
 
 ######################################################################

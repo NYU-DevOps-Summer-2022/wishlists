@@ -542,6 +542,83 @@ class TestWishlistServer(TestCase):
         self.assertEqual(item.wishlist_id, data["wishlist_id"])
         self.assertEqual(item.product_id, data["product_id"])
 
+    def test_update_wishlist_item(self):
+        """Updates wishlist item"""
+        test_wishlist = WishlistFactory()
+        logging.debug("Test Wishlist: %s", test_wishlist.serialize())
+        response = self.app.post(
+            BASE_URL, json=test_wishlist.serialize(), content_type=CONTENT_TYPE_JSON
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        # Make sure location header is set
+        location = response.headers.get("Location", None)
+        self.assertIsNotNone(location)
+
+        # Check the data is correct
+        new_wishlist = response.get_json()
+        self.assertEqual(new_wishlist["name"], test_wishlist.name)
+
+        # Check that the location header was correct
+        response = self.app.get(location, content_type=CONTENT_TYPE_JSON)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        new_wishlist = response.get_json()
+        self.assertEqual(new_wishlist["name"], test_wishlist.name)
+
+        item = ItemFactory()
+        item.wishlist_id = new_wishlist["id"]
+
+        req = {"customer_id": test_wishlist.customer_id, "product_id": item.product_id}
+
+        response = self.app.post(
+            BASE_URL + "/" + str(new_wishlist["id"]) + "/items",
+            json=req,
+            content_type=CONTENT_TYPE_JSON,
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        data = response.get_json()
+
+        self.assertIsNotNone(item.id)
+        self.assertEqual(item.wishlist_id, data["wishlist_id"])
+        self.assertEqual(item.product_id, data["product_id"])
+
+        req = {"customer_id": test_wishlist.customer_id, "product_id": 204}
+
+        response = self.app.put(
+            BASE_URL + "/" + str(new_wishlist["id"]) + "/items/" + str(data["id"]),
+            json=req,
+            content_type=CONTENT_TYPE_JSON,
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        data = response.get_json()
+
+        self.assertIsNotNone(item.id)
+        self.assertEqual(item.wishlist_id, data["wishlist_id"])
+        self.assertEqual(204, data["product_id"])
+
+        # wishlist not found case
+        response = self.app.put(
+            BASE_URL + "/" + str(new_wishlist["id"] + 1) + "/items/1232",
+            json=req,
+            content_type=CONTENT_TYPE_JSON,
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+        # item not found case
+        response = self.app.put(
+            BASE_URL + "/" + str(new_wishlist["id"]) + "/items/1232",
+            json=req,
+            content_type=CONTENT_TYPE_JSON,
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
     def test_add_product_to_wishlist_does_not_exist(self):
         """Adds products to a wishlist, check where wishlist or customer does not exist"""
         test_wishlist = WishlistFactory()
@@ -567,14 +644,39 @@ class TestWishlistServer(TestCase):
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
+        req = {
+            "customer_id": new_wishlist["customer_id"],
+            "product_id": item.product_id,
+        }
+
+        response = self.app.post(
+            BASE_URL + "/" + str(new_wishlist["id"] + 1) + "/items",
+            json=req,
+            content_type=CONTENT_TYPE_JSON,
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_update_wishlist_item_does_not_exist(self):
+        """Update wishlist item, check where customer does not exist"""
+        test_wishlist = WishlistFactory()
+        logging.debug("Test Wishlist: %s", test_wishlist.serialize())
+        response = self.app.post(
+            BASE_URL, json=test_wishlist.serialize(), content_type=CONTENT_TYPE_JSON
+        )
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        # Check the data is correct
+        new_wishlist = response.get_json()
+
+        item = ItemFactory()
+        item.wishlist_id = new_wishlist["id"]
+
+        req = {"customer_id": 10, "product_id": item.product_id}
+
         response = self.app.put(
-            BASE_URL
-            + "/"
-            + str(test_wishlist.customer_id)
-            + "/"
-            + str(10)
-            + "/"
-            + str(item.product_id),
+            BASE_URL + "/" + str(new_wishlist["id"]) + "/items/1",
+            json=req,
             content_type=CONTENT_TYPE_JSON,
         )
 

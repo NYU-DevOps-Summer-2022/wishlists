@@ -207,7 +207,7 @@ class Item(db.Model):
 
     def create(self):
         """
-        Creates a Wishlist to the database
+        Creates a Wishlist item to the database
         """
         logger.info(
             "Creating wishlist_id=[%s] product_id=[%s]",
@@ -216,6 +216,17 @@ class Item(db.Model):
         )
         self.id = None  # id must be none to generate next primary key
         db.session.add(self)
+        db.session.commit()
+
+    def update(self):
+        """
+        Updates a Wishlist item to the database
+        """
+        logger.info(
+            "Creating wishlist_id=[%s] product_id=[%s]",
+            self.wishlist_id,
+            self.product_id,
+        )
         db.session.commit()
 
     def delete(self):

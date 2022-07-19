@@ -39,17 +39,24 @@ def list_wishlists():
     """Returns all of the Wishlists"""
     app.logger.info("Request for the list of wishlists")
     wishlists = []
+
     print(request.args.keys())
-    name = request.args.get("name")
-    customer_id = request.args.get("customer_id")
-    if customer_id:
-        wishlists = Wishlist.find_by_customer_id(customer_id)
-    elif name:
-        wishlists = Wishlist.find_by_name(name)
+
+    name = request.args.get("name", None)
+    customer_id = request.args.get("customer_id", None)
+
+    query = {"name": name, "customer_id": customer_id}
+
+    if name or customer_id:
+        wishlists = Wishlist.find_by_param(query)
     else:
         wishlists = Wishlist.all()
-    results = [wishlist.serialize() for wishlist in wishlists]
+
+    results = []
+    if wishlists is not None:
+        results = [wishlist.serialize() for wishlist in wishlists]
     app.logger.info("Returning %d wishlists", len(results))
+
     return jsonify(results), status.HTTP_200_OK
 
 

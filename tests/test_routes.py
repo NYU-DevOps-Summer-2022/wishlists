@@ -232,6 +232,59 @@ class TestWishlistServer(TestCase):
         new_wishlist = response.get_json()
         self.assertEqual(new_wishlist["name"], test_wishlist.name)
 
+    def test_query_wishlist_list_by_param(self):
+        """It should Query Wishlists by Customer_ID"""
+        wishlists = self._create_wishlists(10)
+        test_customer_id = wishlists[0].customer_id
+        test_name = wishlists[2].name
+        customer_id_wishlists = []
+        name_wishlists = []
+
+        test_cust_id = wishlists[2].customer_id
+        test_cust_name = wishlists[2].name
+
+        # multi param
+        cust_name_wishlists = []
+
+        for wishlist in wishlists:
+            if wishlist.customer_id == test_customer_id:
+                customer_id_wishlists.append(wishlist)
+
+            if wishlist.name == test_name:
+                name_wishlists.append(wishlist)
+
+            if (wishlist.customer_id == test_cust_id) and (
+                wishlist.name == test_cust_name
+            ):
+                cust_name_wishlists.append(wishlist)
+
+        response = self.app.get(f"/wishlists?customer_id={test_customer_id}")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = response.get_json()
+        self.assertEqual(len(data), len(customer_id_wishlists))
+        # check the data just to be sure
+        for wishlist in data:
+            self.assertEqual(wishlist["customer_id"], test_customer_id)
+
+        response = self.app.get(
+            f"/wishlists?customer_id={test_cust_id}&name={test_cust_name}"
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = response.get_json()
+        self.assertEqual(len(data), len(cust_name_wishlists))
+        # check the data just to be sure
+        for wishlist in data:
+            self.assertEqual(wishlist["customer_id"], test_cust_id)
+            self.assertEqual(wishlist["name"], test_cust_name)
+
+        response = self.app.get(f"/wishlists?name={test_name}")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = response.get_json()
+        self.assertEqual(len(data), len(name_wishlists))
+        # check the data just to be sure
+        for wishlist in data:
+            self.assertEqual(wishlist["name"], test_name)
+
     def test_query_wishlist_list_by_customer_id(self):
         """It should Query Wishlists by Customer_ID"""
         wishlists = self._create_wishlists(10)

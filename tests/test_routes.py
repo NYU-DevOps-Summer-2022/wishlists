@@ -75,6 +75,13 @@ class TestWishlistServer(TestCase):
     #  T E S T   C A S E S
     ######################################################################
 
+    def test_health(self):
+        """It should test the health API"""
+        response = self.app.get("/health")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = response.get_json()
+        self.assertEqual(data["status"], "OK")
+
     def test_index(self):
         """It should call the home page"""
         response = self.app.get("/")

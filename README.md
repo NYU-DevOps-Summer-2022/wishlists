@@ -19,16 +19,18 @@ These are the available REST API calls which are used for Wishlist.
 
 | Endpoint                 | Methods     | Rule                                                   |
 | ------------------------ | ----------- | ------------------------------------------------------ |
-| create_wishlists         | POST        | /wishlists                                             |
-| delete_wishlists         | DELETE      | /wishlists/<int:wishlist_id>                           |
-| get_wishlists            | GET         | /wishlists/<int:wishlist_id>                           |
-| get_wishlist_items       | GET         | /wishlists/<int:wishlist_id>/items                     |
-| get_wishlist_item        | GET         | /wishlists/<int:wishlist_id>/items/<int:item_id>       |
 | index                    | GET         | /                                                      |
+| health                   | GET         | /health                                                |
 | list_wishlists           | GET         | /wishlists                                             |
+| create_wishlists         | POST        | /wishlists                                             |
+| get_wishlists            | GET         | /wishlists/<int:wishlist_id>                           |
 | update_wishlist_name     | PUT         | /wishlists/<int:wishlist_id>                           |
+| delete_wishlists         | DELETE      | /wishlists/<int:wishlist_id>                           |
+| get_wishlist_items       | GET         | /wishlists/<int:wishlist_id>/items                     |
 | create_wishlist_items    | POST        | /wishlists/<int:wishlist_id>/items                     |
+| get_wishlist_item        | GET         | /wishlists/<int:wishlist_id>/items/<int:item_id>       |
 | update_wishlist_items    | PUT         | /wishlists/<int:wishlist_id>/items/<int:item_id>       |
+| delete_wishlist_item     | DELETE      | /wishlists/<int:wishlist_id>/items/<int:item_id>       |
 
 ## Contents
 

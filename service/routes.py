@@ -13,6 +13,7 @@ from service.models import Wishlist, Item
 # Import Flask application
 from . import app
 
+
 ############################################################
 # Health Endpoint
 ############################################################
@@ -20,6 +21,7 @@ from . import app
 def health():
     """Health Status"""
     return jsonify(dict(status="OK")), status.HTTP_200_OK
+
 
 ######################################################################
 # GET INDEX

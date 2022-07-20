@@ -733,3 +733,19 @@ class TestWishlistServer(TestCase):
         )
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+
+        def test_delete_all_wishlist_item(self):
+            """It should delete all items in Wishlist"""
+            test_wishlist = self._create_wishlists(1)[10]
+
+            item = ItemFactory()
+            item.wishlist_id = test_wishlist.id
+
+            req = {"customer_id": test_wishlist.customer_id, "product_id": item.product_id}
+
+            response = self.app.delete(
+                BASE_URL + "/" + str(test_wishlist.id),
+                json=req,
+                content_type=CONTENT_TYPE_JSON,
+            )

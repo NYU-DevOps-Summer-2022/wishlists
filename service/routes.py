@@ -451,3 +451,22 @@ def check_content_type(media_type):
         status.HTTP_415_UNSUPPORTED_MEDIA_TYPE,
         "Content-Type must be {}".format(media_type),
     )
+
+######################################################################
+# DELETE ALL WISHLIST'S ITEM
+######################################################################
+@app.route("/wishlists/<int:wishlist_id>", methods=["DELETE"])
+def delete_all_wishlist_item(wishlist_id):
+    """
+    Delete all Wishlist's Item
+    This endpoint will delete all Product based on the product id
+    """
+    app.logger.info(
+        "Request to delete all the Products for Wishlist id: %s", (wishlist_id)
+    )
+
+    item = Item.find_by_wishlist_id(wishlist_id)
+    for i in item:
+        i.delete()
+
+    return make_response("", status.HTTP_204_NO_CONTENT)

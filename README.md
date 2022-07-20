@@ -26,6 +26,7 @@ These are the available REST API calls which are used for Wishlist.
 | get_wishlists            | GET         | /wishlists/<int:wishlist_id>                           |
 | update_wishlist_name     | PUT         | /wishlists/<int:wishlist_id>                           |
 | delete_wishlists         | DELETE      | /wishlists/<int:wishlist_id>                           |
+| clear_wishlist           | PUT         | /wishlists/<int:wishlist_id>/clear                     |
 | get_wishlist_items       | GET         | /wishlists/<int:wishlist_id>/items                     |
 | create_wishlist_items    | POST        | /wishlists/<int:wishlist_id>/items                     |
 | get_wishlist_item        | GET         | /wishlists/<int:wishlist_id>/items/<int:item_id>       |

@@ -221,6 +221,38 @@ def delete_wishlists(wishlist_id):
 
 
 ######################################################################
+# CLEAR A WISHLIST
+######################################################################
+@app.route("/wishlists/<int:wishlist_id>/clear", methods=["PUT"])
+def clear_wishlist(wishlist_id):
+    """
+    Clear a Wishlist
+
+    This endpoint will clear a Wishlist based the id specified in the path
+    """
+    app.logger.info("Request to clear wishlist with id: %s", wishlist_id)
+    wishlist = Wishlist.find(wishlist_id)
+    if not wishlist:
+        abort(
+            status.HTTP_404_NOT_FOUND,
+            f"Wishlist with id '{wishlist_id}' was not found.",
+        )
+
+    items = Item.find_by_wishlist_id(wishlist_id)
+
+    for item in items:
+        item.delete()
+
+    response = wishlist.serialize()
+
+    response["items"] = [
+        item.serialize() for item in Item.find_by_wishlist_id(wishlist_id)
+    ]
+
+    return jsonify(response), status.HTTP_200_OK
+
+
+######################################################################
 # UPDATE WISHLIST NAME
 ######################################################################
 @app.route("/wishlists/<int:wishlist_id>", methods=["PUT"])

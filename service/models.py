@@ -80,10 +80,10 @@ class Wishlist(db.Model):
         try:
             self.name = data["name"]
 
-            try:
+            if (str(data["customer_id"]).isdigit()):
                 self.customer_id = int(data["customer_id"])
-            except ValueError:
-                # Handle the exception - data validation error
+            else:
+                # Data validation error
                 raise DataValidationError(
                     "Invalid type for integer [customer_id]: "
                     + str(type(data["customer_id"]))

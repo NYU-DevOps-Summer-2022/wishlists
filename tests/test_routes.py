@@ -83,11 +83,10 @@ class TestWishlistServer(TestCase):
         self.assertEqual(data["status"], "OK")
 
     def test_index(self):
-        """It should call the home page"""
+        """It should return the index page"""
         response = self.app.get("/")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        data = response.get_json()
-        self.assertEqual(data["name"], "Wishlist Demo REST API Service")
+        self.assertIn(b"Wishlists REST API Service", response.data)
 
     def test_get_wishlist_list(self):
         """It should Get a list of Wishlists"""

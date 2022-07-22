@@ -30,14 +30,8 @@ def health():
 def index():
     """Root URL response"""
     app.logger.info("Request for Root URL")
-    return (
-        jsonify(
-            name="Wishlist Demo REST API Service",
-            version="1.0",
-            paths=url_for("create_wishlists", _external=True),
-        ),
-        status.HTTP_200_OK,
-    )
+
+    return app.send_static_file("index.html")
 
 
 ######################################################################

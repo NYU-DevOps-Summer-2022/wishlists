@@ -80,7 +80,7 @@ class Wishlist(db.Model):
         try:
             self.name = data["name"]
 
-            if (str(data["customer_id"]).isdigit()):
+            if str(data["customer_id"]).isdigit():
                 self.customer_id = int(data["customer_id"])
             else:
                 # Data validation error

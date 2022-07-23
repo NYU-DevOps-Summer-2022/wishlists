@@ -193,7 +193,7 @@ class TestWishlistServer(TestCase):
         self.assertEqual(len(data["items"]), 0)
 
         response = self.app.put(
-            BASE_URL + "/" + str(test_wishlist.id+1) + "/clear",
+            BASE_URL + "/" + str(test_wishlist.id + 1) + "/clear",
         )
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)

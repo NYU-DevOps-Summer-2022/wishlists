@@ -27,9 +27,9 @@ from behave import given
 from compare import expect
 
 
-@given('the following wishlists')
+@given("the following wishlists")
 def step_impl(context):
-    """ Delete all Wishlists and load new ones """
+    """Delete all Wishlists and load new ones"""
     # List all of the wishlists and delete them one by one
     rest_endpoint = f"{context.BASE_URL}/wishlists"
     context.resp = requests.get(rest_endpoint)
@@ -40,9 +40,6 @@ def step_impl(context):
 
     # load the database with new wishlists
     for row in context.table:
-        payload = {
-            "name": row['name'],
-            "customer_id": row['customer_id']
-        }
+        payload = {"name": row["name"], "customer_id": row["customer_id"]}
         context.resp = requests.post(rest_endpoint, json=payload)
         expect(context.resp.status_code).to_equal(201)

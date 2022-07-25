@@ -79,16 +79,16 @@ class Wishlist(db.Model):
         """
         try:
             self.name = data["name"]
-            if (
-                isinstance(data["customer_id"], int)
-                and type(data["customer_id"]) != bool
-            ):
-                self.customer_id = data["customer_id"]
+
+            if str(data["customer_id"]).isdigit():
+                self.customer_id = int(data["customer_id"])
             else:
+                # Data validation error
                 raise DataValidationError(
                     "Invalid type for integer [customer_id]: "
                     + str(type(data["customer_id"]))
                 )
+
         except AttributeError as error:
             raise DataValidationError("Invalid attribute: " + error.args[0])
         except KeyError as error:

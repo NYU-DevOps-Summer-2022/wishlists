@@ -325,8 +325,6 @@ def create_wishlist_items(wishlist_id):
     # TODO : validate param
     product_id = req["product_id"]
 
-    wishlists = []
-
     # check for existence
     Wishlist.find_or_404(wishlist_id)
 

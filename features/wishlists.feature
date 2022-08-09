@@ -84,3 +84,21 @@ Scenario: Update a Wishlist
     Then I should see the message "Success"
     And I should see "monsoon" in the results
     And I should not see "summer" in the results
+
+Scenario: Delete a Wishlist
+    When I visit the "Home Page"
+    And I set the "Name" to "summer"
+    And I press the "Search" button
+    Then I should see the message "Success"
+    And I should see "summer" in the "Name" field
+    When I copy the "Id" field
+    And I press the "Delete" button
+    Then I should see the message "Wishlist has been Deleted!"
+    When I press the "Clear" button
+    And I paste the "Id" field
+    And I press the "Retrieve" button
+    Then I should see the message "404 Not Found"
+    When I press the "Clear" button
+    And I press the "Search" button
+    Then I should see the message "Success"
+    And I should not see "summer" in the results

@@ -1,17 +1,18 @@
 # Wishlists
 
 [![Build Status](https://github.com/NYU-DevOps-Summer-2022/wishlists/actions/workflows/ci.yml/badge.svg)](https://github.com/NYU-DevOps-Summer-2022/wishlists/actions)
-
 [![codecov](https://codecov.io/gh/NYU-DevOps-Summer-2022/wishlists/branch/master/graph/badge.svg?token=ZQI6MNHOPK)](https://codecov.io/gh/NYU-DevOps-Summer-2022/wishlists)
 
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![Python](https://img.shields.io/badge/Language-Python-blue.svg)](https://python.org/)
 
-This is a skeleton you can use to start your projects
-
 ## Overview
 
-This project template contains starter code for your class project. The `/service` folder contains your `models.py` file for your model and a `routes.py` file for your service. The `/tests` folder has test case starter code for testing the model and the service separately. All you need to do is add your functionality. You can use the [lab-flask-tdd](https://github.com/nyu-devops/lab-flask-tdd) for code examples to copy from.
+In this project, we have created a wishlist resource as a part of an e-commerce website for the final project of the DevOps class at NYU taught by Professor John Rofrano for the Summer of 2022. We utilized the base code provided in https://github.com/nyu-devops/ across the various repositories. The members of the project are:
+
+Aashiq Mohamed baig, Anugya Shah, MD Shahedur Rahman, Namratha Vempaty Neeraj Kanuri
+
+To run the all the test cases locally, please use the command "nosetests". 
 
 ## Calls to the Wishlist
 
@@ -38,27 +39,78 @@ These are the available REST API calls which are used for Wishlist.
 The project contains the following:
 
 ```text
-.gitignore          - this will ignore vagrant and other metadata files
-.flaskenv           - Environment variables to configure Flask
-.gitattributes      - File to gix Windows CRLF issues
-.devcontainers/     - Folder with support for VSCode Remote Containers
-dot-env-example     - copy to .env to use environment variables
-requirements.txt    - list if Python libraries required by your code
-config.py           - configuration parameters
-
-service/                   - service python package
-├── __init__.py            - package initializer
-├── models.py              - module with business models
-├── routes.py              - module with service routes
-└── utils                  - utility package
-    ├── error_handlers.py  - HTTP error handling code
-    ├── log_handlers.py    - logging setup code
-    └── status.py          - HTTP status constants
-
-tests/              - test cases package
-├── __init__.py     - package initializer
-├── test_models.py  - test suite for business models
-└── test_routes.py  - test suite for service routes
+.
+├── Dockerfile
+├── LICENSE
+├── Makefile
+├── Procfile
+├── README.md
+├── __pycache__
+│   └── config.cpython-39.pyc
+├── config.py
+├── coverage.xml
+├── deploy
+│   ├── dev-deployment.yaml
+│   ├── dev-postgresql.yaml
+│   ├── dev-service.yaml
+│   ├── dev.yaml
+│   ├── prod-deployment.yaml
+│   ├── prod-postgresql.yaml
+│   ├── prod-service.yaml
+│   └── prod.yaml
+├── dot-env-example
+├── features
+│   ├── environment.py
+│   ├── steps
+│   │   ├── web_steps.py
+│   │   └── wishlists_steps.py
+│   └── wishlists.feature
+├── requirements.txt
+├── service
+│   ├── __init__.py
+│   ├── __pycache__
+│   │   ├── __init__.cpython-39.pyc
+│   │   ├── models.cpython-39.pyc
+│   │   └── routes.cpython-39.pyc
+│   ├── models.py
+│   ├── routes.py
+│   ├── static
+│   │   ├── css
+│   │   │   ├── blue_bootstrap.min.css
+│   │   │   ├── cerulean_bootstrap.min.css
+│   │   │   ├── darkly_bootstrap.min.css
+│   │   │   ├── flatly_bootstrap.min.css
+│   │   │   └── slate_bootstrap.min.css
+│   │   ├── images
+│   │   │   └── newapp-icon.png
+│   │   ├── index.html
+│   │   └── js
+│   │       ├── bootstrap.min.js
+│   │       ├── jquery-3.6.0.min.js
+│   │       └── rest_api.js
+│   └── utils
+│       ├── __pycache__
+│       │   ├── cli_commands.cpython-39.pyc
+│       │   ├── error_handlers.cpython-39.pyc
+│       │   ├── log_handlers.cpython-39.pyc
+│       │   └── status.cpython-39.pyc
+│       ├── cli_commands.py
+│       ├── error_handlers.py
+│       ├── log_handlers.py
+│       └── status.py
+├── setup.cfg
+└── tests
+    ├── __init__.py
+    ├── __pycache__
+    │   ├── __init__.cpython-39.pyc
+    │   ├── factories.cpython-39.pyc
+    │   ├── test_cli_commands.cpython-39.pyc
+    │   ├── test_models.cpython-39.pyc
+    │   └── test_routes.cpython-39.pyc
+    ├── factories.py
+    ├── test_cli_commands.py
+    ├── test_models.py
+    └── test_routes.py
 ```
 
 ## License

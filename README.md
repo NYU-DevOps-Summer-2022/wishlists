@@ -1,7 +1,6 @@
 # Wishlists
 
 [![Build Status](https://github.com/NYU-DevOps-Summer-2022/wishlists/actions/workflows/ci.yml/badge.svg)](https://github.com/NYU-DevOps-Summer-2022/wishlists/actions)
-
 [![codecov](https://codecov.io/gh/NYU-DevOps-Summer-2022/wishlists/branch/master/graph/badge.svg?token=ZQI6MNHOPK)](https://codecov.io/gh/NYU-DevOps-Summer-2022/wishlists)
 
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
@@ -68,3 +67,76 @@ Copyright (c) John Rofrano. All rights reserved.
 Licensed under the Apache License. See [LICENSE](LICENSE)
 
 This repository is part of the NYU masters class: **CSCI-GA.2820-001 DevOps and Agile Methodologies** created and taught by *John Rofrano*, Adjunct Instructor, NYU Courant Institute, Graduate Division, Computer Science, and NYU Stern School of Business.
+
+```
+app
+├─ .devcontainer
+│  ├─ Dockerfile
+│  ├─ devcontainer.json
+│  ├─ docker-compose.yml
+│  └─ scripts
+│     └─ install-tools.sh
+├─ .flaskenv
+├─ .git
+├─ .gitattributes
+├─ .github
+│  ├─ ISSUE_TEMPLATE
+│  │  └─ user-story.md
+│  └─ workflows
+│     └─ ci.yml
+├─ .gitignore
+├─ Dockerfile
+├─ LICENSE
+├─ Makefile
+├─ Procfile
+├─ README.md
+├─ config.py
+├─ deploy
+│  ├─ dev-deployment.yaml
+│  ├─ dev-postgresql.yaml
+│  ├─ dev-service.yaml
+│  ├─ dev.yaml
+│  ├─ prod-deployment.yaml
+│  ├─ prod-postgresql.yaml
+│  ├─ prod-service.yaml
+│  └─ prod.yaml
+├─ dot-env-example
+├─ features
+│  ├─ environment.py
+│  ├─ steps
+│  │  ├─ web_steps.py
+│  │  └─ wishlists_steps.py
+│  └─ wishlists.feature
+├─ requirements.txt
+├─ service
+│  ├─ __init__.py
+│  ├─ models.py
+│  ├─ routes.py
+│  ├─ static
+│  │  ├─ css
+│  │  │  ├─ blue_bootstrap.min.css
+│  │  │  ├─ cerulean_bootstrap.min.css
+│  │  │  ├─ darkly_bootstrap.min.css
+│  │  │  ├─ flatly_bootstrap.min.css
+│  │  │  └─ slate_bootstrap.min.css
+│  │  ├─ images
+│  │  │  └─ newapp-icon.png
+│  │  ├─ index.html
+│  │  └─ js
+│  │     ├─ bootstrap.min.js
+│  │     ├─ jquery-3.6.0.min.js
+│  │     └─ rest_api.js
+│  └─ utils
+│     ├─ cli_commands.py
+│     ├─ error_handlers.py
+│     ├─ log_handlers.py
+│     └─ status.py
+├─ setup.cfg
+└─ tests
+   ├─ __init__.py
+   ├─ factories.py
+   ├─ test_cli_commands.py
+   ├─ test_models.py
+   └─ test_routes.py
+
+```

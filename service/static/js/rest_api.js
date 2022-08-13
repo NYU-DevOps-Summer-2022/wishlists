@@ -13,9 +13,9 @@ $(function () {
 
     // Updates the form with data from the response
     function update_item_form_data(res) {
-        $("#item_id").val(res.id);
+        $("#wishlist_item_id").val(res.id);
         $("#wishlist_id").val(res.wishlist_id);
-        $("#product_id").val(res.product_id);
+        $("#wishlist_product_id").val(res.product_id);
     }
 
     // Clears all form fields
@@ -26,7 +26,7 @@ $(function () {
 
     // Clears all form fields
     function clear_item_form_data() {
-        $("#product_id").val("");
+        $("#wishlist_product_id").val("");
     }
 
     // Updates the flash message area
@@ -76,7 +76,7 @@ $(function () {
     $("#create-item-btn").click(function () {
 
         let wishlist_id = $("#wishlist_id").val();
-        let product_id = $("#product_id").val();
+        let product_id = $("#wishlist_product_id").val();
 
         let data = {
             "product_id": product_id,
@@ -143,9 +143,9 @@ $(function () {
 
     $("#update-item-btn").click(function () {
 
-        let item_id = $("#item_id").val();
+        let item_id = $("#wishlist_item_id").val();
         let wishlist_id = $("#wishlist_id").val();
-        let product_id = $("#product_id").val();
+        let product_id = $("#wishlist_product_id").val();
 
         let data = {
             "product_id": product_id
@@ -207,7 +207,7 @@ $(function () {
 
     $("#retrieve-item-btn").click(function () {
 
-        let item_id = $("#item_id").val();
+        let item_id = $("#wishlist_item_id").val();
         let wishlist_id = $("#wishlist_id").val();
 
         $("#flash_message").empty();
@@ -265,7 +265,7 @@ $(function () {
 
     $("#delete-item-btn").click(function () {
 
-        let item_id = $("#item_id").val();
+        let item_id = $("#wishlist_item_id").val();
         let wishlist_id = $("#wishlist_id").val();
 
         $("#flash_message").empty();
@@ -302,7 +302,7 @@ $(function () {
     // ****************************************
 
     $("#clear-item-btn").click(function () {
-        $("#item_id").val("");
+        $("#wishlist_item_id").val("");
         $("#flash_message").empty();
         clear_item_form_data();
     });

@@ -123,7 +123,37 @@ Scenario: Create a Wishlist Item
     And the wishlist ID should be accurate
     And close the tab
 
-Scenario: Wishlist items
+Scenario: List Wishlist items
+    When I visit the "Home Page"
+    And I press the "Search" button
+    Then I should see the message "Success"
+    When I click row "0"
+    And I set the "Product ID" to "425"
+    And I press the "Create Item" button
+    Then I should see the message "Success"
+    When I press the "Clear Item" button
+    And I set the "Product ID" to "589"
+    And I press the "Create Item" button
+    Then I should see the message "Success"
+    When I copy the "Item ID" field
+    And I press the "Clear Item" button
+    Then the "Item ID" field should be empty
+    And the wishlist ID should be accurate
+    And the "Product ID" field should be empty
+    When I paste the "Item ID" field
+    And I press the "Retrieve Item" button
+    Then I should see the message "Success"
+    And I should see "589" in the "Product ID" field
+    And the wishlist ID should be accurate
+    When I press the "Search Item" button
+    Then I should see the message "Success"
+    And I should see "425" in the results
+    And I should see "589" in the results
+    And I should not see "426" in the results
+    And the wishlist ID should be accurate
+    And close the tab
+
+Scenario: Update a Wishlist Item
     When I visit the "Home Page"
     And I press the "Search" button
     Then I should see the message "Success"
@@ -141,9 +171,49 @@ Scenario: Wishlist items
     Then I should see the message "Success"
     And I should see "425" in the "Product ID" field
     And the wishlist ID should be accurate
+    When I set the "Product ID" to "426"
+    And I press the "Update Item" button
+    Then I should see the message "Success"
+    When I press the "Retrieve Item" button
+    Then I should see the message "Success"
+    And I should see "426" in the "Product ID" field
+    And the wishlist ID should be accurate
+    And close the tab
+
+Scenario: Delete Wishlist item
+    When I visit the "Home Page"
+    And I press the "Search" button
+    Then I should see the message "Success"
+    When I click row "0"
+    And I set the "Product ID" to "425"
+    And I press the "Create Item" button
+    Then I should see the message "Success"
+    When I press the "Clear Item" button
+    And I set the "Product ID" to "589"
+    And I press the "Create Item" button
+    Then I should see the message "Success"
+    When I copy the "Item ID" field
+    And I press the "Clear Item" button
+    Then the "Item ID" field should be empty
+    And the wishlist ID should be accurate
+    And the "Product ID" field should be empty
+    When I paste the "Item ID" field
+    And I press the "Retrieve Item" button
+    Then I should see the message "Success"
+    And I should see "589" in the "Product ID" field
+    And the wishlist ID should be accurate
     When I press the "Search Item" button
     Then I should see the message "Success"
     And I should see "425" in the results
+    And I should see "589" in the results
     And I should not see "426" in the results
     And the wishlist ID should be accurate
+    When I press the "Delete Item" button
+    Then I should see the message "Wishlist item has been Deleted!"
+    Then the wishlist ID should be accurate
+    When I press the "Search Item" button
+    Then I should see the message "Success"
+    And I should not see "425" in the results
+    And I should see "589" in the results
+    And I should not see "426" in the results
     And close the tab

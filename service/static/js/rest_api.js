@@ -288,6 +288,32 @@ $(function () {
     });
 
     // ****************************************
+    // Clear Wishlist
+    // ****************************************
+
+    $("#clear-wishlist-btn").click(function () {
+        let wishlist_id = $("#wishlist_id").val();
+
+        $("#flash_message").empty();
+
+        let ajax = $.ajax({
+            type: "PUT",
+            url: `/wishlists/${wishlist_id}/clear`,
+            contentType: "application/json",
+            data: '',
+        })
+
+        ajax.done(function(res){
+            clear_item_form_data()
+            flash_message("Wishlist has been cleared")
+        });
+
+        ajax.fail(function(res){
+            flash_message("Server error!")
+        });
+    });
+
+    // ****************************************
     // Clear the form
     // ****************************************
 

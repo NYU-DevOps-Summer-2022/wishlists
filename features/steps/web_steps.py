@@ -91,6 +91,14 @@ def step_impl(context):
     expect(element.get_attribute("value")).to_equal(context.wishlist_id)
 
 
+@then('close the tab')
+def step_impl(context):
+    context.driver.switch_to.window(context.child_window)
+    context.driver.close()
+
+    context.driver.switch_to.window(context.parent_window)
+
+
 ##################################################################
 # These two function simulate copy and paste
 ##################################################################
@@ -199,3 +207,5 @@ def step_impl(context, row_number):
     context.driver.switch_to.window(chld)
 
     context.wishlist_id = context.driver.current_url.split("/")[-2]
+    context.parent_window = parent
+    context.child_window = chld

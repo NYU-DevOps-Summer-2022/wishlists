@@ -544,29 +544,6 @@ class WishlistItemResource(Resource):
 
 
 ######################################################################
-# RETRIEVE WISHLISTS OF A CUSTOMER
-######################################################################
-@app.route("/wishlists/customer/<int:customer_id>", methods=["GET"])
-def get_wishlists_customerID(customer_id):
-    """
-    Retrieve a all wishlists with a specific customer id
-    This endpoint will return any Wishlist based on it's id
-    """
-    wishlists = []
-    app.logger.info("Request for wishlists with customer id: %s", customer_id)
-    wishlists = Wishlist.find_by_customer_id(customer_id)
-    if not wishlists:
-        abort(
-            status.HTTP_404_NOT_FOUND,
-            f"Wishlist with customer id '{customer_id}' was not found.",
-        )
-
-    results = [wishlist.serialize() for wishlist in wishlists]
-    app.logger.info("Returning %s wishlist", len(results))
-    return jsonify(results), status.HTTP_200_OK
-
-
-######################################################################
 #  U T I L I T Y   F U N C T I O N S
 ######################################################################
 

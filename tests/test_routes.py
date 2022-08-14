@@ -17,7 +17,7 @@ from tests.factories import WishlistFactory, ItemFactory
 DATABASE_URI = os.getenv(
     "DATABASE_URI", "postgresql://postgres:postgres@localhost:5432/testdb"
 )
-BASE_URL = "/wishlists"
+BASE_URL = "/api/wishlists"
 CONTENT_TYPE_JSON = "application/json"
 
 
@@ -309,7 +309,7 @@ class TestWishlistServer(TestCase):
             ):
                 cust_name_wishlists.append(wishlist)
 
-        response = self.app.get(f"/wishlists?customer_id={test_customer_id}")
+        response = self.app.get(BASE_URL, query_string=f"customer_id={test_customer_id}")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         data = response.get_json()
         self.assertEqual(len(data), len(customer_id_wishlists))
@@ -318,7 +318,7 @@ class TestWishlistServer(TestCase):
             self.assertEqual(wishlist["customer_id"], test_customer_id)
 
         response = self.app.get(
-            f"/wishlists?customer_id={test_cust_id}&name={test_cust_name}"
+            BASE_URL, query_string=f"customer_id={test_cust_id}&name={test_cust_name}"
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         data = response.get_json()
@@ -328,7 +328,7 @@ class TestWishlistServer(TestCase):
             self.assertEqual(wishlist["customer_id"], test_cust_id)
             self.assertEqual(wishlist["name"], test_cust_name)
 
-        response = self.app.get(f"/wishlists?name={test_name}")
+        response = self.app.get(BASE_URL, query_string=f"name={test_name}")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         data = response.get_json()
         self.assertEqual(len(data), len(name_wishlists))
@@ -344,7 +344,7 @@ class TestWishlistServer(TestCase):
         for wishlist in wishlists:
             if wishlist.customer_id == test_customer_id:
                 customer_id_wishlists.append(wishlist)
-        response = self.app.get(f"/wishlists/customer/{test_customer_id}")
+        response = self.app.get(BASE_URL, query_string=f"customer_id={test_customer_id}")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         data = response.get_json()
         self.assertEqual(len(data), len(customer_id_wishlists))
@@ -487,7 +487,7 @@ class TestWishlistServer(TestCase):
     def test_list_by_customer_id_not_found(self):
         """It should return HTTP 404 not found"""
         customer_id = -1
-        response = self.app.get(f"/wishlists/customer/{customer_id}")
+        response = self.app.get(f"{BASE_URL}/customer/{customer_id}")
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_update_wishlist_name_wishlist_not_found(self):

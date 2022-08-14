@@ -309,7 +309,9 @@ class TestWishlistServer(TestCase):
             ):
                 cust_name_wishlists.append(wishlist)
 
-        response = self.app.get(BASE_URL, query_string=f"customer_id={test_customer_id}")
+        response = self.app.get(
+            BASE_URL, query_string=f"customer_id={test_customer_id}"
+        )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         data = response.get_json()
         self.assertEqual(len(data), len(customer_id_wishlists))
@@ -344,7 +346,9 @@ class TestWishlistServer(TestCase):
         for wishlist in wishlists:
             if wishlist.customer_id == test_customer_id:
                 customer_id_wishlists.append(wishlist)
-        response = self.app.get(BASE_URL, query_string=f"customer_id={test_customer_id}")
+        response = self.app.get(
+            BASE_URL, query_string=f"customer_id={test_customer_id}"
+        )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         data = response.get_json()
         self.assertEqual(len(data), len(customer_id_wishlists))
@@ -562,7 +566,7 @@ class TestWishlistServer(TestCase):
         item.wishlist_id = new_wishlist["id"]
 
         req = {"customer_id": test_wishlist.customer_id, "product_id": item.product_id}
-        
+
         response = self.app.post(
             BASE_URL + "/" + str(new_wishlist["id"]) + "/items",
             json=req,

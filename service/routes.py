@@ -6,9 +6,9 @@ Paths:
 POST /wishlists - creates a new Wishlist record in the database
 """
 
-from flask import jsonify, request, abort, make_response, render_template
-from flask_restx import Api, Resource, fields, reqparse, inputs
-from service.utils import error_handlers, status  # HTTP Status Codes
+from flask import jsonify, request, abort, make_response
+from flask_restx import Resource, fields, reqparse
+from service.utils import status  # HTTP Status Codes
 from service.models import Wishlist, Item
 
 # Import Flask application

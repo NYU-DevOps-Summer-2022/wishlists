@@ -90,11 +90,12 @@ class TestWishlistServer(TestCase):
 
     def test_get_wishlist_list(self):
         """It should Get a list of Wishlists"""
-        self._create_wishlists(8)
+        self._create_wishlists(7)
         response = self.app.get(BASE_URL)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         data = response.get_json()
-        self.assertEqual(len(data), 8)
+        print(data)
+        self.assertEqual(len(data), 7)
 
     def test_get_wishlist(self):
         """It should Get a single Wishlist"""
@@ -177,6 +178,7 @@ class TestWishlistServer(TestCase):
         response = self.app.get(f"{BASE_URL}/{test_wishlist.id}/items")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         data = response.get_json()
+        print(data)
         self.assertIsNotNone(data[0]["id"])
         self.assertEqual(data[0]["wishlist_id"], item.wishlist_id)
         self.assertEqual(data[0]["product_id"], item.product_id)
@@ -264,7 +266,7 @@ class TestWishlistServer(TestCase):
         response = self.app.post(
             BASE_URL, json=test_wishlist.serialize(), content_type=CONTENT_TYPE_JSON
         )
-        print(response.get_json())
+
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
         # Make sure location header is set
@@ -276,9 +278,7 @@ class TestWishlistServer(TestCase):
         self.assertEqual(new_wishlist["name"], test_wishlist.name)
 
         # Check that the location header was correct
-        print(location)
         response = self.app.get(location, content_type=CONTENT_TYPE_JSON)
-        print(response.get_json())
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         new_wishlist = response.get_json()
         self.assertEqual(new_wishlist["name"], test_wishlist.name)
@@ -562,13 +562,13 @@ class TestWishlistServer(TestCase):
         item.wishlist_id = new_wishlist["id"]
 
         req = {"customer_id": test_wishlist.customer_id, "product_id": item.product_id}
-
+        
         response = self.app.post(
             BASE_URL + "/" + str(new_wishlist["id"]) + "/items",
             json=req,
             content_type=CONTENT_TYPE_JSON,
         )
-
+        print(response.get_json())
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
         data = response.get_json()
@@ -647,7 +647,7 @@ class TestWishlistServer(TestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         data = response.get_json()
-
+        print(data)
         self.assertIsNotNone(item.id)
         self.assertEqual(item.wishlist_id, data["wishlist_id"])
         self.assertEqual(204, data["product_id"])

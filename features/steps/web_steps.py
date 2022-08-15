@@ -84,6 +84,21 @@ def step_impl(context, element_name):
     expect(element.get_attribute("value")).to_be("")
 
 
+@then('the wishlist ID should be accurate')
+def step_impl(context):
+    element_id = "wishlist_id"
+    element = context.driver.find_element_by_id(element_id)
+    expect(element.get_attribute("value")).to_equal(context.wishlist_id)
+
+
+@then('close the tab')
+def step_impl(context):
+    context.driver.switch_to.window(context.child_window)
+    context.driver.close()
+
+    context.driver.switch_to.window(context.parent_window)
+
+
 ##################################################################
 # These two function simulate copy and paste
 ##################################################################
@@ -118,7 +133,7 @@ def step_impl(context, element_name):
 
 @when('I press the "{button}" button')
 def step_impl(context, button):
-    button_id = button.lower() + "-btn"
+    button_id = button.lower().replace(" ", "-") + "-btn"
     context.driver.find_element_by_id(button_id).click()
 
 
@@ -176,3 +191,21 @@ def step_impl(context, element_name, text_string):
     )
     element.clear()
     element.send_keys(text_string)
+
+
+@when('I click row "{row_number}"')
+def step_impl(context, row_number):
+    row_id = "row_" + row_number
+    context.driver.find_element_by_id(row_id).click()
+    #obtain window handle of browser in focus
+    p = context.driver.current_window_handle
+    #obtain parent window handle
+    parent = context.driver.window_handles[0]
+    #obtain browser tab window
+    chld = context.driver.window_handles[1]
+    #switch to browser tab
+    context.driver.switch_to.window(chld)
+
+    context.wishlist_id = context.driver.current_url.split("/")[-2]
+    context.parent_window = parent
+    context.child_window = chld

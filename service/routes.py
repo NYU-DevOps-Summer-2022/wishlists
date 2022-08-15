@@ -35,6 +35,21 @@ def index():
 
 
 ######################################################################
+# GET WISHLIST INDEX (ITEMS)
+######################################################################
+@app.route("/wishlists/<int:wishlist_id>/view")
+def wishlist_index(wishlist_id):
+    """Root URL response"""
+    app.logger.info("Request for wishlist %s view", wishlist_id)
+
+    wishlist = Wishlist.find(wishlist_id)
+    if not wishlist:
+        return app.send_static_file("wishlist_not_found.html")
+
+    return app.send_static_file("wishlist_index.html")
+
+
+######################################################################
 # LIST ALL WISHLISTS
 ######################################################################
 @app.route("/wishlists", methods=["GET"])
@@ -308,27 +323,10 @@ def create_wishlist_items(wishlist_id):
     req = request.get_json()
 
     # TODO : validate param
-    customer_id = req["customer_id"]
     product_id = req["product_id"]
 
-    wishlists = []
-    app.logger.info("Request for wishlists with customer id: %s", customer_id)
-
-    wishlists = Wishlist.find_by_customer_id(customer_id)
-
-    results = [wishlist.serialize() for wishlist in wishlists]
-
-    if len(results) == 0:
-        abort(
-            status.HTTP_404_NOT_FOUND,
-            f"Wishlist with customer id '{customer_id}' was not found.",
-        )
-
-    if not any(wishlist["id"] == wishlist_id for wishlist in results):
-        abort(
-            status.HTTP_404_NOT_FOUND,
-            f"Wishlist with customer id '{customer_id}' and id '{wishlist_id}' was not found.",
-        )
+    # check for existence
+    Wishlist.find_or_404(wishlist_id)
 
     items = Item.find_by_wishlist_id_and_product_id(wishlist_id, product_id)
     results = [item.serialize() for item in items]
@@ -361,27 +359,16 @@ def update_wishlist_items(wishlist_id, item_id):
     req = request.get_json()
 
     # TODO : validate param
-    customer_id = req["customer_id"]
     product_id = req["product_id"]
 
-    wishlists = []
-    app.logger.info("Request for wishlists with customer id: %s", customer_id)
+    app.logger.info(
+        "Request for wishlists with wishlist_id id: %s and item_id: %s",
+        wishlist_id,
+        item_id,
+    )
 
-    wishlists = Wishlist.find_by_customer_id(customer_id)
-
-    results = [wishlist.serialize() for wishlist in wishlists]
-
-    if len(results) == 0:
-        abort(
-            status.HTTP_404_NOT_FOUND,
-            f"Wishlist with customer id '{customer_id}' was not found.",
-        )
-
-    if not any(wishlist["id"] == wishlist_id for wishlist in results):
-        abort(
-            status.HTTP_404_NOT_FOUND,
-            f"Wishlist with customer id '{customer_id}' and id '{wishlist_id}' was not found.",
-        )
+    # check for existence
+    Wishlist.find_or_404(wishlist_id)
 
     items = Item.find_by_wishlist_id_and_item_id(wishlist_id, item_id)
 
@@ -414,7 +401,7 @@ def delete_wishlist_item(wishlist_id, item_id):
     This endpoint will delete a Product based on the product id
     """
     app.logger.info(
-        "Request to delete Product %s for Wishlist id: %s", (item_id, wishlist_id)
+        "Request to delete item %s for Wishlist id: %s", item_id, wishlist_id
     )
 
     item = Item.find_by_wishlist_id_and_item_id(wishlist_id, item_id)

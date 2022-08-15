@@ -288,7 +288,7 @@ class WishlistCollection(Resource):
     # ---------------------------------------------------------------------
     @api.doc("create_wishlists")
     @api.response(400, "The posted data was not valid")
-    @api.expect(wishlist_model, validate=True)
+    @api.expect(wishlist_model)
     @api.marshal_with(wishlist_model, code=201)
     def post(self):
         """

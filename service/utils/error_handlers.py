@@ -35,3 +35,18 @@ def request_validation_error(error):
         "error": "Bad Request",
         "message": message,
     }, status.HTTP_400_BAD_REQUEST
+
+
+@app.errorhandler(status.HTTP_500_INTERNAL_SERVER_ERROR)
+def internal_server_error(error):
+    """Handles unexpected server error with 500_SERVER_ERROR"""
+    message = str(error)
+    app.logger.error(message)
+    return (
+        jsonify(
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            error="Internal Server Error",
+            message=message,
+        ),
+        status.HTTP_500_INTERNAL_SERVER_ERROR,
+    )

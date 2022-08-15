@@ -34,7 +34,7 @@ def index():
     return app.send_static_file("index.html")
 
 
-# Define the model so that the docs reflect what can be sent
+# Dict to hold the data of each item in a wishlist
 items_fields = {
     "id": fields.Integer(required=True, description="The unique assigned"),
     "product_id": fields.Integer(
@@ -45,6 +45,7 @@ items_fields = {
     ),
 }
 
+# Define the model so that the docs reflect what can be sent
 create_model = api.model(
     "Wishlist",
     {
@@ -74,6 +75,16 @@ create_model_2 = api.model(
     },
 )
 
+create_model_3 = api.model(
+    "Simple_Wishlist",
+    {
+        "name": fields.String(required=True, description="The name of the Wishlist"),
+        "customer_id": fields.Integer(
+            required=True, description="The ID unique to each customer"
+        ),
+    },
+)
+
 wishlist_model = api.inherit(
     "WishlistModel",
     create_model,
@@ -94,6 +105,16 @@ item_model = api.inherit(
     },
 )
 
+simple_wishlist_model = api.inherit(
+    "Simple_Wishlist",
+    create_model_3,
+    {
+        "id": fields.Integer(
+            readOnly=True, description="The unique id assigned internally by service"
+        ),
+    },
+)
+
 # query string arguments
 wishlist_args = reqparse.RequestParser()
 wishlist_args.add_argument(
@@ -106,7 +127,6 @@ wishlist_args.add_argument(
     help="List Wishlist by customer id",
     location="args",
 )
-# wishlist_args.add_argument('product_id', type=int, required=False, help='List Wishlist by product id')
 
 
 ######################################################################
@@ -160,8 +180,8 @@ class WishlistResource(Resource):
     @api.doc("update_wishlists")
     @api.response(404, "Wishlist not found")
     @api.response(400, "The posted wishlist data was not valid")
-    @api.expect(wishlist_model)
-    @api.marshal_with(wishlist_model)
+    @api.expect(simple_wishlist_model)
+    @api.marshal_with(simple_wishlist_model)
     def put(self, wishlist_id):
         """
         Updates a Wishlist name
@@ -236,7 +256,7 @@ class WishlistCollection(Resource):
     # ---------------------------------------------------------------------
     @api.doc("list_wishlists")
     @api.expect(wishlist_args, validate=True)
-    @api.marshal_list_with(wishlist_model)
+    @api.marshal_list_with(simple_wishlist_model)
     def get(self):
         """Returns all of the Wishlists"""
         app.logger.info("Request for the list of wishlists")
@@ -268,7 +288,7 @@ class WishlistCollection(Resource):
     # ---------------------------------------------------------------------
     @api.doc("create_wishlists")
     @api.response(400, "The posted data was not valid")
-    @api.expect(wishlist_model)
+    @api.expect(wishlist_model, validate=True)
     @api.marshal_with(wishlist_model, code=201)
     def post(self):
         """

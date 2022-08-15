@@ -102,3 +102,24 @@ Scenario: Delete a Wishlist
     And I press the "Search" button
     Then I should see the message "Success"
     And I should not see "summer" in the results
+
+
+Scenario: Create a Wishlist Item
+    When I visit the "Home Page"
+    And I press the "Search" button
+    Then I should see the message "Success"
+    When I click row "0"
+    And I set the "Product ID" to "425"
+    And I press the "Create Item" button
+    Then I should see the message "Success"
+    When I copy the "Item ID" field
+    And I press the "Clear Item" button
+    Then the "Item ID" field should be empty
+    And the wishlist ID should be accurate
+    And the "Product ID" field should be empty
+    When I paste the "Item ID" field
+    And I press the "Retrieve Item" button
+    Then I should see the message "Success"
+    And I should see "425" in the "Product ID" field
+    And the wishlist ID should be accurate
+    And close the tab

@@ -42,7 +42,7 @@ $(function () {
     $("#create-btn").click(function () {
 
         let name = $("#wishlist_name").val();
-        let customer_id = $("#wishlist_customer_id").val();
+        let customer_id = parseInt($("#wishlist_customer_id").val());
 
         let data = {
             "name": name,
@@ -76,7 +76,7 @@ $(function () {
     $("#create-item-btn").click(function () {
 
         let wishlist_id = $("#wishlist_id").val();
-        let product_id = $("#wishlist_product_id").val();
+        let product_id = parseInt($("#wishlist_product_id").val());
 
         let data = {
             "product_id": product_id,
@@ -110,7 +110,7 @@ $(function () {
 
         let wishlist_id = $("#wishlist_id").val();
         let name = $("#wishlist_name").val();
-        let customer_id = $("#wishlist_customer_id").val();
+        let customer_id = parseInt($("#wishlist_customer_id").val());
 
         let data = {
             "name": name,
@@ -145,7 +145,7 @@ $(function () {
 
         let item_id = $("#wishlist_item_id").val();
         let wishlist_id = $("#wishlist_id").val();
-        let product_id = $("#wishlist_product_id").val();
+        let product_id = parseInt($("#wishlist_product_id").val());
 
         let data = {
             "product_id": product_id

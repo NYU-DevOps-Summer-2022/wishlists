@@ -40,6 +40,6 @@ def step_impl(context):
 
     # load the database with new wishlists
     for row in context.table:
-        payload = {"name": row["name"], "customer_id": row["customer_id"]}
+        payload = {"name": row["name"], "customer_id": int(row["customer_id"])}
         context.resp = requests.post(rest_endpoint, json=payload)
         expect(context.resp.status_code).to_equal(201)

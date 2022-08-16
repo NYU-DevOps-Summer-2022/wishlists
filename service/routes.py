@@ -64,9 +64,6 @@ def wishlist_index(wishlist_id):
 create_model_2 = api.model(
     "Item",
     {
-        "wishlist_id": fields.Integer(
-            required=True, description="The ID unique to each Wishlist"
-        ),
         "product_id": fields.Integer(
             required=True, description="The ID unique to each Product"
         ),
@@ -79,6 +76,9 @@ item_model = api.inherit(
     {
         "id": fields.Integer(
             readOnly=True, description="The unique id assigned internally by service"
+        ),
+        "wishlist_id": fields.Integer(
+            required=True, description="The ID unique to each Wishlist"
         ),
     },
 )
@@ -197,7 +197,7 @@ class WishlistResource(Resource):
     @api.doc("update_wishlists")
     @api.response(404, "Wishlist not found")
     @api.response(400, "The posted wishlist data was not valid")
-    @api.expect(wishlist_model)
+    @api.expect(wishlist_model, validate=True)
     @api.marshal_with(wishlist_model)
     def put(self, wishlist_id):
         """
@@ -315,7 +315,7 @@ class WishlistCollection(Resource):
     # ---------------------------------------------------------------------
     @api.doc("create_wishlists")
     @api.response(400, "The posted data was not valid")
-    @api.expect(wishlist_model)
+    @api.expect(wishlist_model, validate=True)
     @api.marshal_with(wishlist_model, code=201)
     def post(self):
         """
@@ -413,7 +413,7 @@ class WishlistItemsCollection(Resource):
     # ---------------------------------------------------------------------
     @api.doc("create_wishlist_items")
     @api.response(400, "The posted data was not valid")
-    @api.expect(wishlist_model)
+    @api.expect(create_model_2, validate=True)
     @api.marshal_with(item_model, code=201)
     def post(self, wishlist_id):
         """
@@ -496,7 +496,7 @@ class WishlistItemResource(Resource):
     @api.doc("update_wishlist_items")
     @api.response(404, "Item not found")
     @api.response(400, "The posted Item data was not valid")
-    @api.expect(wishlist_model)
+    @api.expect(create_model_2, validate=True)
     @api.marshal_with(item_model)
     def put(self, wishlist_id, item_id):
         """
@@ -543,7 +543,7 @@ class WishlistItemResource(Resource):
     # ---------------------------------------------------------------------
     # DELETE A WISHLIST ITEM
     # ---------------------------------------------------------------------
-    @api.doc("delete_pets")
+    @api.doc("delete_items")
     @api.response(204, "Item deleted")
     def delete(self, wishlist_id, item_id):
         """

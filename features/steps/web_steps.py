@@ -84,14 +84,14 @@ def step_impl(context, element_name):
     expect(element.get_attribute("value")).to_be("")
 
 
-@then('the wishlist ID should be accurate')
+@then("the wishlist ID should be accurate")
 def step_impl(context):
     element_id = "wishlist_id"
     element = context.driver.find_element_by_id(element_id)
     expect(element.get_attribute("value")).to_equal(context.wishlist_id)
 
 
-@then('close the tab')
+@then("close the tab")
 def step_impl(context):
     context.driver.switch_to.window(context.child_window)
     context.driver.close()
@@ -197,13 +197,13 @@ def step_impl(context, element_name, text_string):
 def step_impl(context, row_number):
     row_id = "row_" + row_number
     context.driver.find_element_by_id(row_id).click()
-    #obtain window handle of browser in focus
+    # obtain window handle of browser in focus
     p = context.driver.current_window_handle
-    #obtain parent window handle
+    # obtain parent window handle
     parent = context.driver.window_handles[0]
-    #obtain browser tab window
+    # obtain browser tab window
     chld = context.driver.window_handles[1]
-    #switch to browser tab
+    # switch to browser tab
     context.driver.switch_to.window(chld)
 
     context.wishlist_id = context.driver.current_url.split("/")[-2]

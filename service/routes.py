@@ -72,7 +72,7 @@ create_model_2 = api.model(
         ),
         "product_price": fields.Float(
             required=True, description="The price of the product"
-        )
+        ),
     },
 )
 
@@ -534,7 +534,10 @@ class WishlistItemResource(Resource):
 
         message = ""
 
-        results = [item.deserialize(wishlist_id, product_id, product_name, product_price) for item in items]
+        results = [
+            item.deserialize(wishlist_id, product_id, product_name, product_price)
+            for item in items
+        ]
 
         if len(results) > 0:
             item = results[0]

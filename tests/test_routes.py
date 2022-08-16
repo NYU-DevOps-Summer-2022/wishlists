@@ -105,7 +105,11 @@ class TestWishlistServer(TestCase):
         item = ItemFactory()
         item.wishlist_id = test_wishlist.id
 
-        req = {"product_id": item.product_id, "product_name": item.product_name, "product_price": item.product_price}
+        req = {
+            "product_id": item.product_id,
+            "product_name": item.product_name,
+            "product_price": item.product_price,
+        }
 
         response = self.app.post(
             BASE_URL + "/" + str(test_wishlist.id) + "/items",
@@ -134,7 +138,11 @@ class TestWishlistServer(TestCase):
         item = ItemFactory()
         item.wishlist_id = test_wishlist.id
 
-        req = {"product_id": item.product_id, "product_name": item.product_name, "product_price": item.product_price}
+        req = {
+            "product_id": item.product_id,
+            "product_name": item.product_name,
+            "product_price": item.product_price,
+        }
 
         response = self.app.post(
             BASE_URL + "/" + str(test_wishlist.id) + "/items",
@@ -162,7 +170,11 @@ class TestWishlistServer(TestCase):
         item = ItemFactory()
         item.wishlist_id = test_wishlist.id
 
-        req = {"product_id": item.product_id, "product_name": item.product_name, "product_price": item.product_price}
+        req = {
+            "product_id": item.product_id,
+            "product_name": item.product_name,
+            "product_price": item.product_price,
+        }
 
         response = self.app.post(
             BASE_URL + "/" + str(test_wishlist.id) + "/items",
@@ -208,7 +220,11 @@ class TestWishlistServer(TestCase):
         item = ItemFactory()
         item.wishlist_id = test_wishlist.id
 
-        req = {"product_id": item.product_id, "product_name": item.product_name, "product_price": item.product_price}
+        req = {
+            "product_id": item.product_id,
+            "product_name": item.product_name,
+            "product_price": item.product_price,
+        }
 
         response = self.app.post(
             BASE_URL + "/" + str(test_wishlist.id) + "/items",
@@ -362,7 +378,11 @@ class TestWishlistServer(TestCase):
         item = ItemFactory()
         item.wishlist_id = test_wishlist.id
 
-        req = {"product_id": item.product_id, "product_name": item.product_name, "product_price": item.product_price}
+        req = {
+            "product_id": item.product_id,
+            "product_name": item.product_name,
+            "product_price": item.product_price,
+        }
 
         response = self.app.post(
             BASE_URL + "/" + str(test_wishlist.id) + "/items",
@@ -392,7 +412,11 @@ class TestWishlistServer(TestCase):
         item = ItemFactory()
         item.wishlist_id = test_wishlist.id
 
-        req = {"product_id": item.product_id, "product_name": item.product_name, "product_price": item.product_price}
+        req = {
+            "product_id": item.product_id,
+            "product_name": item.product_name,
+            "product_price": item.product_price,
+        }
 
         response = self.app.post(
             BASE_URL + "/" + str(test_wishlist.id) + "/items",
@@ -569,7 +593,11 @@ class TestWishlistServer(TestCase):
         item = ItemFactory()
         item.wishlist_id = new_wishlist["id"]
 
-        req = {"product_id": item.product_id, "product_name": item.product_name, "product_price": item.product_price}
+        req = {
+            "product_id": item.product_id,
+            "product_name": item.product_name,
+            "product_price": item.product_price,
+        }
 
         response = self.app.post(
             BASE_URL + "/" + str(new_wishlist["id"]) + "/items",
@@ -585,7 +613,11 @@ class TestWishlistServer(TestCase):
         self.assertEqual(item.wishlist_id, data["wishlist_id"])
         self.assertEqual(item.product_id, data["product_id"])
 
-        req = {"product_id": item.product_id, "product_name": item.product_name, "product_price": item.product_price}
+        req = {
+            "product_id": item.product_id,
+            "product_name": item.product_name,
+            "product_price": item.product_price,
+        }
 
         response = self.app.post(
             BASE_URL + "/" + str(new_wishlist["id"]) + "/items",
@@ -628,7 +660,11 @@ class TestWishlistServer(TestCase):
         item = ItemFactory()
         item.wishlist_id = new_wishlist["id"]
 
-        req = {"product_id": item.product_id, "product_name": item.product_name, "product_price": item.product_price}
+        req = {
+            "product_id": item.product_id,
+            "product_name": item.product_name,
+            "product_price": item.product_price,
+        }
 
         response = self.app.post(
             BASE_URL + "/" + str(new_wishlist["id"]) + "/items",
@@ -644,7 +680,11 @@ class TestWishlistServer(TestCase):
         self.assertEqual(item.wishlist_id, data["wishlist_id"])
         self.assertEqual(item.product_id, data["product_id"])
 
-        req = {"product_id": 204, "product_name": item.product_name, "product_price": item.product_price}
+        req = {
+            "product_id": 204,
+            "product_name": item.product_name,
+            "product_price": item.product_price,
+        }
 
         response = self.app.put(
             BASE_URL + "/" + str(new_wishlist["id"]) + "/items/" + str(data["id"]),
@@ -693,7 +733,11 @@ class TestWishlistServer(TestCase):
         item = ItemFactory()
         item.wishlist_id = new_wishlist["id"]
 
-        req = {"product_id": item.product_id, "product_name": item.product_name, "product_price": item.product_price}
+        req = {
+            "product_id": item.product_id,
+            "product_name": item.product_name,
+            "product_price": item.product_price,
+        }
 
         response = self.app.post(
             BASE_URL + "/" + str(new_wishlist["id"] + 1) + "/items",

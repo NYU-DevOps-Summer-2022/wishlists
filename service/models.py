@@ -201,12 +201,15 @@ class Item(db.Model):
     product_price = db.Column(db.Numeric, nullable=False)
 
     def __repr__(self):
-        return "<Item id=[%s] wishlist_id=[%s] product_id=[%s] product_name = [%s] product_price=[%s]>" % (
-            self.id,
-            self.wishlist_id,
-            self.product_id,
-            self.product_name,
-            self.product_price
+        return (
+            "<Item id=[%s] wishlist_id=[%s] product_id=[%s] product_name = [%s] product_price=[%s]>"
+            % (
+                self.id,
+                self.wishlist_id,
+                self.product_id,
+                self.product_name,
+                self.product_price,
+            )
         )
 
     def create(self):
@@ -218,7 +221,7 @@ class Item(db.Model):
             self.wishlist_id,
             self.product_id,
             self.product_name,
-            self.product_price
+            self.product_price,
         )
         self.id = None  # id must be none to generate next primary key
         db.session.add(self)
@@ -233,7 +236,7 @@ class Item(db.Model):
             self.wishlist_id,
             self.product_id,
             self.product_name,
-            self.product_price
+            self.product_price,
         )
         db.session.commit()
 
@@ -250,7 +253,7 @@ class Item(db.Model):
             "wishlist_id": self.wishlist_id,
             "product_id": self.product_id,
             "product_name": self.product_name,
-            "product_price": self.product_price
+            "product_price": self.product_price,
         }
 
     def deserialize(self, wishlist_id, product_id, product_name, product_price):

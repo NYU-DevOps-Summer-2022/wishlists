@@ -34,6 +34,21 @@ def index():
     return app.send_static_file("index.html")
 
 
+######################################################################
+# GET WISHLIST INDEX (ITEMS)
+######################################################################
+@app.route("/wishlists/<int:wishlist_id>/view")
+def wishlist_index(wishlist_id):
+    """Root URL response"""
+    app.logger.info("Request for wishlist %s view", wishlist_id)
+
+    wishlist = Wishlist.find(wishlist_id)
+    if not wishlist:
+        return app.send_static_file("wishlist_not_found.html")
+
+    return app.send_static_file("wishlist_index.html")
+
+
 # Dict to hold the data of each item in a wishlist
 # items_fields = {
 #     "id": fields.Integer(required=True, description="The unique assigned"),
@@ -412,28 +427,10 @@ class WishlistItemsCollection(Resource):
         req = api.payload
 
         # TODO : validate param
-        # print(req)
-        customer_id = req["customer_id"]
         product_id = req["product_id"]
 
-        wishlists = []
-        app.logger.info("Request for wishlists with customer id: %s", customer_id)
-
-        wishlists = Wishlist.find_by_customer_id(customer_id)
-
-        results = [wishlist.serialize() for wishlist in wishlists]
-
-        if len(results) == 0:
-            abort(
-                status.HTTP_404_NOT_FOUND,
-                f"Wishlist with customer id '{customer_id}' was not found.",
-            )
-
-        if not any(wishlist["id"] == wishlist_id for wishlist in results):
-            abort(
-                status.HTTP_404_NOT_FOUND,
-                f"Wishlist with customer id '{customer_id}' and id '{wishlist_id}' was not found.",
-            )
+        # check for existence
+        Wishlist.find_or_404(wishlist_id)
 
         items = Item.find_by_wishlist_id_and_product_id(wishlist_id, product_id)
         results = [item.serialize() for item in items]
@@ -512,27 +509,16 @@ class WishlistItemResource(Resource):
         req = api.payload
 
         # TODO : validate param
-        customer_id = req["customer_id"]
         product_id = req["product_id"]
 
-        wishlists = []
-        app.logger.info("Request for wishlists with customer id: %s", customer_id)
+        app.logger.info(
+            "Request for wishlists with wishlist_id id: %s and item_id: %s",
+            wishlist_id,
+            item_id,
+        )
 
-        wishlists = Wishlist.find_by_customer_id(customer_id)
-
-        results = [wishlist.serialize() for wishlist in wishlists]
-
-        if len(results) == 0:
-            abort(
-                status.HTTP_404_NOT_FOUND,
-                f"Wishlist with customer id '{customer_id}' was not found.",
-            )
-
-        if not any(wishlist["id"] == wishlist_id for wishlist in results):
-            abort(
-                status.HTTP_404_NOT_FOUND,
-                f"Wishlist with customer id '{customer_id}' and id '{wishlist_id}' was not found.",
-            )
+        # check for existence
+        Wishlist.find_or_404(wishlist_id)
 
         items = Item.find_by_wishlist_id_and_item_id(wishlist_id, item_id)
 

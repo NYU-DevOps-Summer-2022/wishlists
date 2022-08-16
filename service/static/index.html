@@ -47,7 +47,7 @@
               </div>
             </div>
 
-            <!-- CATEGORY -->
+            <!-- CUSTOMER ID -->
             <div class="form-group">
               <label class="control-label col-sm-2" for="wishlist_customer_id">Customer ID:</label>
               <div class="col-sm-10">
@@ -70,6 +70,13 @@
 
       <!-- Search Results -->
       <div class="table-responsive col-md-12" id="search_results">
+        <script>
+          function view_item(wishlist_id) {
+            window.open(
+              document.URL+"wishlists/"+wishlist_id+"/view", "_blank");
+            }
+      </script>
+
         <table class="table table-striped">
           <thead>
           <tr>

@@ -67,6 +67,12 @@ create_model_2 = api.model(
         "product_id": fields.Integer(
             required=True, description="The ID unique to each Product"
         ),
+        "product_name": fields.String(
+            required=True, description="The name of the product", nullable=False
+        ),
+        "product_price": fields.Float(
+            required=True, description="The price of the product"
+        )
     },
 )
 
@@ -428,6 +434,8 @@ class WishlistItemsCollection(Resource):
 
         # TODO : validate param
         product_id = req["product_id"]
+        product_name = req["product_name"]
+        product_price = req["product_price"]
 
         # check for existence
         Wishlist.find_or_404(wishlist_id)
@@ -441,7 +449,7 @@ class WishlistItemsCollection(Resource):
             return message, status.HTTP_200_OK
 
         item = Item()
-        item.deserialize(wishlist_id, product_id)
+        item.deserialize(wishlist_id, product_id, product_name, product_price)
         item.create()
         message = item.serialize()
 
@@ -510,6 +518,8 @@ class WishlistItemResource(Resource):
 
         # TODO : validate param
         product_id = req["product_id"]
+        product_name = req["product_name"]
+        product_price = req["product_price"]
 
         app.logger.info(
             "Request for wishlists with wishlist_id id: %s and item_id: %s",
@@ -524,7 +534,7 @@ class WishlistItemResource(Resource):
 
         message = ""
 
-        results = [item.deserialize(wishlist_id, product_id) for item in items]
+        results = [item.deserialize(wishlist_id, product_id, product_name, product_price) for item in items]
 
         if len(results) > 0:
             item = results[0]

@@ -30,3 +30,5 @@ class ItemFactory(factory.Factory):
     id = factory.Sequence(lambda n: n)
     wishlist_id = factory.LazyAttribute(lambda x: random.randrange(0, 10000))
     product_id = factory.LazyAttribute(lambda x: random.randrange(0, 10000))
+    product_name = factory.Faker("name")
+    product_price = factory.LazyAttribute(lambda x: random.randrange(20, 10000))

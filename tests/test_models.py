@@ -256,12 +256,14 @@ class TestItem(unittest.TestCase):
 
     def test_create_wishlist_item(self):
         """It should Create a wishlist item and assert that it exists"""
-        item = Item(wishlist_id=1, product_id=10)
-        self.assertEqual(str(item), "<Item id=[None] wishlist_id=[1] product_id=[10]>")
+        item = Item(wishlist_id=1, product_id=10, product_name="ball", product_price=10.4)
+        self.assertEqual(str(item), "<Item id=[None] wishlist_id=[1] product_id=[10] product_name = [ball] product_price=[10.4]>")
         self.assertTrue(item is not None)
         self.assertEqual(item.id, None)
         self.assertEqual(item.wishlist_id, 1)
         self.assertEqual(item.product_id, 10)
+        self.assertEqual(item.product_name, "ball")
+        self.assertEqual(item.product_price, 10.4)
 
     def test_find_by_wishlist_id_and_product_id(self):
         """It should find wishlist items by wishlist id and product id"""
@@ -271,7 +273,7 @@ class TestItem(unittest.TestCase):
         wishlist.create()
         self.assertIsNotNone(wishlist.id)
 
-        item = Item(wishlist_id=wishlist.id, product_id=10)
+        item = Item(wishlist_id=wishlist.id, product_id=10, product_name="ball", product_price=10.4)
         item.create()
 
         logging.debug(item)
@@ -290,7 +292,7 @@ class TestItem(unittest.TestCase):
         wishlist.create()
         self.assertIsNotNone(wishlist.id)
 
-        item = Item(wishlist_id=wishlist.id, product_id=10)
+        item = Item(wishlist_id=wishlist.id, product_id=10, product_name="ball", product_price=10.4)
         item.create()
 
         logging.debug(item)

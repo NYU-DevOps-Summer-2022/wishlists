@@ -58,7 +58,7 @@ create_model = api.model(
         # 'wishlist_id': fields.Integer(required=True,
         #                             description='The ID unique to each Wishlist'),
         "items": fields.Nested(
-            items_fields, description="Nested dictionary to access the items schema"
+            items_fields, required=False, description="Nested dictionary to access the items schema"
         ),
     },
 )

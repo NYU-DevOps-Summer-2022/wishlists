@@ -17,24 +17,32 @@
 """
 Module: error_handlers
 """
+from flask import jsonify
 from service.models import DataValidationError
-from service import app, api
+from service import app
 from . import status
 
 
 ######################################################################
 # Error Handlers
 ######################################################################
-@api.errorhandler(DataValidationError)
+@app.errorhandler(DataValidationError)
 def request_validation_error(error):
     """Handles Value Errors from bad data"""
+    return bad_request(error)
+
+
+@app.errorhandler(status.HTTP_400_BAD_REQUEST)
+def bad_request(error):
+    """Handles bad requests with 400_BAD_REQUEST"""
     message = str(error)
-    app.logger.error(message)
-    return {
-        "status_code": status.HTTP_400_BAD_REQUEST,
-        "error": "Bad Request",
-        "message": message,
-    }, status.HTTP_400_BAD_REQUEST
+    app.logger.warning(message)
+    return (
+        jsonify(
+            status=status.HTTP_400_BAD_REQUEST, error="Bad Request", message=message
+        ),
+        status.HTTP_400_BAD_REQUEST,
+    )
 
 
 @app.errorhandler(status.HTTP_500_INTERNAL_SERVER_ERROR)

@@ -35,34 +35,17 @@ def index():
 
 
 # Dict to hold the data of each item in a wishlist
-items_fields = {
-    "id": fields.Integer(required=True, description="The unique assigned"),
-    "product_id": fields.Integer(
-        required=True, description="The ID unique to each product"
-    ),
-    "wishlist_id": fields.Integer(
-        required=True, description="The ID unique to each Wishlist"
-    ),
-}
+# items_fields = {
+#     "id": fields.Integer(required=True, description="The unique assigned"),
+#     "product_id": fields.Integer(
+#         required=True, description="The ID unique to each product"
+#     ),
+#     "wishlist_id": fields.Integer(
+#         required=True, description="The ID unique to each Wishlist"
+#     ),
+# }
 
-# Define the model so that the docs reflect what can be sent
-create_model = api.model(
-    "Wishlist",
-    {
-        "name": fields.String(required=True, description="The name of the Wishlist"),
-        "customer_id": fields.Integer(
-            required=True, description="The ID unique to each customer"
-        ),
-        # 'product_id': fields.Integer(required=True,
-        #                             description='The ID unique to each product'),
-        # 'wishlist_id': fields.Integer(required=True,
-        #                             description='The ID unique to each Wishlist'),
-        "items": fields.Nested(
-            items_fields, required=False, description="Nested dictionary to access the items schema"
-        ),
-    },
-)
-
+# Define the Item model so that the docs reflect what can be sent
 create_model_2 = api.model(
     "Item",
     {
@@ -71,26 +54,6 @@ create_model_2 = api.model(
         ),
         "product_id": fields.Integer(
             required=True, description="The ID unique to each Product"
-        ),
-    },
-)
-
-create_model_3 = api.model(
-    "Simple_Wishlist",
-    {
-        "name": fields.String(required=True, description="The name of the Wishlist"),
-        "customer_id": fields.Integer(
-            required=True, description="The ID unique to each customer"
-        ),
-    },
-)
-
-wishlist_model = api.inherit(
-    "WishlistModel",
-    create_model,
-    {
-        "id": fields.Integer(
-            readOnly=True, description="The unique id assigned internally by service"
         ),
     },
 )
@@ -105,8 +68,47 @@ item_model = api.inherit(
     },
 )
 
-simple_wishlist_model = api.inherit(
+# Define the model so that the docs reflect what can be sent
+create_model = api.model(
+    "Wishlist",
+    {
+        "name": fields.String(required=True, description="The name of the Wishlist"),
+        "customer_id": fields.Integer(
+            required=True, description="The ID unique to each customer"
+        ),
+        "items": fields.List(
+            fields.Nested(
+                item_model,
+                required=False,
+                description="Nested dictionary to access the items schema",
+            ),
+        ),
+    },
+)
+
+wishlist_model = api.inherit(
+    "WishlistModel",
+    create_model,
+    {
+        "id": fields.Integer(
+            readOnly=True, description="The unique id assigned internally by service"
+        ),
+    },
+)
+
+
+create_model_3 = api.model(
     "Simple_Wishlist",
+    {
+        "name": fields.String(required=True, description="The name of the Wishlist"),
+        "customer_id": fields.Integer(
+            required=True, description="The ID unique to each customer"
+        ),
+    },
+)
+
+simple_wishlist_model = api.inherit(
+    "Simple_Wishlist_Model",
     create_model_3,
     {
         "id": fields.Integer(
@@ -180,8 +182,8 @@ class WishlistResource(Resource):
     @api.doc("update_wishlists")
     @api.response(404, "Wishlist not found")
     @api.response(400, "The posted wishlist data was not valid")
-    @api.expect(simple_wishlist_model)
-    @api.marshal_with(simple_wishlist_model)
+    @api.expect(wishlist_model)
+    @api.marshal_with(wishlist_model)
     def put(self, wishlist_id):
         """
         Updates a Wishlist name
@@ -222,6 +224,10 @@ class WishlistResource(Resource):
 
         message = wishlist.serialize()
 
+        message["items"] = [
+            item.serialize() for item in Item.find_by_wishlist_id(wishlist_id)
+        ]
+
         return message, status.HTTP_200_OK
 
     # ---------------------------------------------------------------------
@@ -256,7 +262,7 @@ class WishlistCollection(Resource):
     # ---------------------------------------------------------------------
     @api.doc("list_wishlists")
     @api.expect(wishlist_args, validate=True)
-    @api.marshal_list_with(simple_wishlist_model)
+    @api.marshal_list_with(wishlist_model)
     def get(self):
         """Returns all of the Wishlists"""
         app.logger.info("Request for the list of wishlists")
@@ -277,7 +283,13 @@ class WishlistCollection(Resource):
 
         results = []
         if wishlists is not None:
-            results = [wishlist.serialize() for wishlist in wishlists]
+            wishlist_results = [wishlist.serialize() for wishlist in wishlists]
+            for wishlist in wishlist_results:
+                wishlist["items"] = [
+                    item.serialize()
+                    for item in Item.find_by_wishlist_id(wishlist["id"])
+                ]
+                results.append(wishlist)
         app.logger.info("Returning %d wishlists", len(results))
 
         # print(results)

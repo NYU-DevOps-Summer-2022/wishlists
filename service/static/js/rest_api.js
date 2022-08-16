@@ -117,7 +117,7 @@ $(function () {
 
         ajax.fail(function(res){
             clear_form_data()
-            flash_message(res.responseJSON.message)
+            flash_message("Wishlist Not Found")
         });
 
     });

@@ -110,6 +110,77 @@ Scenario: Create a Wishlist Item
     Then I should see the message "Success"
     When I click row "0"
     And I set the "Product ID" to "425"
+    And I set the "Product Name" to "phone"
+    And I set the "Product Price" to "500.45"
+    And I press the "Create Item" button
+    Then I should see the message "Success"
+    When I copy the "Item ID" field
+    And I press the "Clear Item" button
+    Then the "Item ID" field should be empty
+    And the wishlist ID should be accurate
+    And the "Product ID" field should be empty
+    And the "Product Name" field should be empty
+    And the "Product Price" field should be empty
+    When I paste the "Item ID" field
+    And I press the "Retrieve Item" button
+    Then I should see the message "Success"
+    And I should see "425" in the "Product ID" field
+    And I should see "phone" in the "Product Name" field
+    And I should see "500.45" in the "Product Price" field
+    And the wishlist ID should be accurate
+    And close the tab
+
+Scenario: List Wishlist items
+    When I visit the "Home Page"
+    And I press the "Search" button
+    Then I should see the message "Success"
+    When I click row "0"
+    And I set the "Product ID" to "425"
+    And I set the "Product Name" to "apple"
+    And I set the "Product Price" to "24"
+    And I press the "Create Item" button
+    Then I should see the message "Success"
+    When I press the "Clear Item" button
+    And I set the "Product ID" to "589"
+    And I set the "Product Name" to "phone"
+    And I set the "Product Price" to "500.45"
+    And I press the "Create Item" button
+    Then I should see the message "Success"
+    When I copy the "Item ID" field
+    And I press the "Clear Item" button
+    Then the "Item ID" field should be empty
+    And the wishlist ID should be accurate
+    And the "Product ID" field should be empty
+    And the "Product Name" field should be empty
+    And the "Product Price" field should be empty
+    When I paste the "Item ID" field
+    And I press the "Retrieve Item" button
+    Then I should see the message "Success"
+    And I should see "589" in the "Product ID" field
+    And I should see "phone" in the "Product Name" field
+    And I should see "500.45" in the "Product Price" field
+    And the wishlist ID should be accurate
+    When I press the "Search Item" button
+    Then I should see the message "Success"
+    And I should see "425" in the results
+    And I should see "589" in the results
+    And I should see "phone" in the results
+    And I should see "apple" in the results
+    And I should see "24" in the results
+    And I should see "500.45" in the results
+    And I should not see "426" in the results
+    And I should not see "car" in the results
+    And the wishlist ID should be accurate
+    And close the tab
+
+Scenario: Update a Wishlist Item
+    When I visit the "Home Page"
+    And I press the "Search" button
+    Then I should see the message "Success"
+    When I click row "0"
+    And I set the "Product ID" to "425"
+    And I set the "Product Name" to "phone"
+    And I set the "Product Price" to "500.45"
     And I press the "Create Item" button
     Then I should see the message "Success"
     When I copy the "Item ID" field
@@ -121,19 +192,34 @@ Scenario: Create a Wishlist Item
     And I press the "Retrieve Item" button
     Then I should see the message "Success"
     And I should see "425" in the "Product ID" field
+    And I should see "phone" in the "Product Name" field
+    And I should see "500.45" in the "Product Price" field
+    And the wishlist ID should be accurate
+    When I set the "Product ID" to "426"
+    And I press the "Update Item" button
+    Then I should see the message "Success"
+    When I press the "Retrieve Item" button
+    Then I should see the message "Success"
+    And I should see "426" in the "Product ID" field
+    And I should see "phone" in the "Product Name" field
+    And I should see "500.45" in the "Product Price" field
     And the wishlist ID should be accurate
     And close the tab
 
-Scenario: List Wishlist items
+Scenario: Delete Wishlist item
     When I visit the "Home Page"
     And I press the "Search" button
     Then I should see the message "Success"
     When I click row "0"
     And I set the "Product ID" to "425"
+    And I set the "Product Name" to "apple"
+    And I set the "Product Price" to "24"
     And I press the "Create Item" button
     Then I should see the message "Success"
     When I press the "Clear Item" button
     And I set the "Product ID" to "589"
+    And I set the "Product Name" to "phone"
+    And I set the "Product Price" to "500.45"
     And I press the "Create Item" button
     Then I should see the message "Success"
     When I copy the "Item ID" field
@@ -152,14 +238,36 @@ Scenario: List Wishlist items
     And I should see "589" in the results
     And I should not see "426" in the results
     And the wishlist ID should be accurate
+    When I press the "Delete Item" button
+    Then I should see the message "Wishlist item has been Deleted!"
+    Then the wishlist ID should be accurate
+    When I press the "Search Item" button
+    Then I should see the message "Success"
+    And I should not see "426" in the results
+    And I should not see "425" in the results
+    And I should see "589" in the results
+    And I should see "phone" in the results
+    And I should not see "apple" in the results
+    And I should not see "24" in the results
+    And I should see "500.45" in the results
+    And I should not see "426" in the results
+    And I should not see "car" in the results
     And close the tab
 
-Scenario: Update a Wishlist Item
+Scenario: Clear Wishlist
     When I visit the "Home Page"
     And I press the "Search" button
     Then I should see the message "Success"
     When I click row "0"
     And I set the "Product ID" to "425"
+    And I set the "Product Name" to "apple"
+    And I set the "Product Price" to "24"
+    And I press the "Create Item" button
+    Then I should see the message "Success"
+    When I press the "Clear Item" button
+    And I set the "Product ID" to "589"
+    And I set the "Product Name" to "phone"
+    And I set the "Product Price" to "500.45"
     And I press the "Create Item" button
     Then I should see the message "Success"
     When I copy the "Item ID" field
@@ -170,13 +278,26 @@ Scenario: Update a Wishlist Item
     When I paste the "Item ID" field
     And I press the "Retrieve Item" button
     Then I should see the message "Success"
-    And I should see "425" in the "Product ID" field
+    And I should see "589" in the "Product ID" field
     And the wishlist ID should be accurate
-    When I set the "Product ID" to "426"
-    And I press the "Update Item" button
+    When I press the "Search Item" button
     Then I should see the message "Success"
-    When I press the "Retrieve Item" button
-    Then I should see the message "Success"
-    And I should see "426" in the "Product ID" field
+    And I should see "425" in the results
+    And I should see "589" in the results
+    And I should not see "426" in the results
     And the wishlist ID should be accurate
+    When I press the "Clear Wishlist" button
+    Then I should see the message "Wishlist has been cleared"
+    Then the wishlist ID should be accurate
+    When I press the "Search Item" button
+    Then I should see the message "Success"
+    And I should not see "426" in the results
+    And I should not see "425" in the results
+    And I should not see "589" in the results
+    And I should not see "phone" in the results
+    And I should not see "apple" in the results
+    And I should not see "24" in the results
+    And I should not see "500.45" in the results
+    And I should not see "426" in the results
+    And I should not see "car" in the results
     And close the tab

@@ -197,12 +197,19 @@ class Item(db.Model):
         db.Integer, db.ForeignKey("wishlist.id", ondelete="CASCADE"), nullable=False
     )
     product_id = db.Column(db.Integer, nullable=False)
+    product_name = db.Column(db.String(63), nullable=False)
+    product_price = db.Column(db.Numeric, nullable=False)
 
     def __repr__(self):
-        return "<Item id=[%s] wishlist_id=[%s] product_id=[%s]>" % (
-            self.id,
-            self.wishlist_id,
-            self.product_id,
+        return (
+            "<Item id=[%s] wishlist_id=[%s] product_id=[%s] product_name = [%s] product_price=[%s]>"
+            % (
+                self.id,
+                self.wishlist_id,
+                self.product_id,
+                self.product_name,
+                self.product_price,
+            )
         )
 
     def create(self):
@@ -210,9 +217,11 @@ class Item(db.Model):
         Creates a Wishlist item to the database
         """
         logger.info(
-            "Creating wishlist_id=[%s] product_id=[%s]",
+            "Creating wishlist_id=[%s] product_id=[%s] product_name = [%s] product_price=[%s]",
             self.wishlist_id,
             self.product_id,
+            self.product_name,
+            self.product_price,
         )
         self.id = None  # id must be none to generate next primary key
         db.session.add(self)
@@ -223,9 +232,11 @@ class Item(db.Model):
         Updates a Wishlist item to the database
         """
         logger.info(
-            "Creating wishlist_id=[%s] product_id=[%s]",
+            "Creating wishlist_id=[%s] product_id=[%s] product_name = [%s] product_price=[%s]",
             self.wishlist_id,
             self.product_id,
+            self.product_name,
+            self.product_price,
         )
         db.session.commit()
 
@@ -241,9 +252,11 @@ class Item(db.Model):
             "id": self.id,
             "wishlist_id": self.wishlist_id,
             "product_id": self.product_id,
+            "product_name": self.product_name,
+            "product_price": self.product_price,
         }
 
-    def deserialize(self, wishlist_id, product_id):
+    def deserialize(self, data):
         """
         Deserializes the wishlist from wishlist_id and product_id
 
@@ -253,8 +266,10 @@ class Item(db.Model):
 
         # skipping validations required since we are accepting them as integers in the API endpoint itself,
         # can add later if required
-        self.wishlist_id = wishlist_id
-        self.product_id = product_id
+        self.wishlist_id = data["wishlist_id"]
+        self.product_id = data["product_id"]
+        self.product_name = data["product_name"]
+        self.product_price = data["product_price"]
 
         return self
 

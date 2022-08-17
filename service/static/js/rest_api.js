@@ -16,6 +16,8 @@ $(function () {
         $("#wishlist_item_id").val(res.id);
         $("#wishlist_id").val(res.wishlist_id);
         $("#wishlist_product_id").val(res.product_id);
+        $("#wishlist_product_name").val(res.product_name);
+        $("#wishlist_product_price").val(res.product_price);
     }
 
     // Clears all form fields
@@ -27,6 +29,8 @@ $(function () {
     // Clears all form fields
     function clear_item_form_data() {
         $("#wishlist_product_id").val("");
+        $("#wishlist_product_name").val("");
+        $("#wishlist_product_price").val("");
     }
 
     // Updates the flash message area
@@ -42,7 +46,7 @@ $(function () {
     $("#create-btn").click(function () {
 
         let name = $("#wishlist_name").val();
-        let customer_id = $("#wishlist_customer_id").val();
+        let customer_id = parseInt($("#wishlist_customer_id").val());
 
         let data = {
             "name": name,
@@ -76,13 +80,23 @@ $(function () {
     $("#create-item-btn").click(function () {
 
         let wishlist_id = $("#wishlist_id").val();
-        let product_id = $("#wishlist_product_id").val();
+        let product_id = parseInt($("#wishlist_product_id").val());
+        let product_name = $("#wishlist_product_name").val();
+        let product_price = parseFloat($("#wishlist_product_price").val());
 
         let data = {
             "product_id": product_id,
+            "product_name": product_name,
+            "product_price": product_price,
         };
 
         $("#flash_message").empty();
+
+        if (product_name == ""){
+            flash_message("Name must be filled out");
+
+            return false;
+        }
         
         let ajax = $.ajax({
             type: "POST",
@@ -110,7 +124,7 @@ $(function () {
 
         let wishlist_id = $("#wishlist_id").val();
         let name = $("#wishlist_name").val();
-        let customer_id = $("#wishlist_customer_id").val();
+        let customer_id = parseInt($("#wishlist_customer_id").val());
 
         let data = {
             "name": name,
@@ -145,13 +159,23 @@ $(function () {
 
         let item_id = $("#wishlist_item_id").val();
         let wishlist_id = $("#wishlist_id").val();
-        let product_id = $("#wishlist_product_id").val();
+        let product_id = parseInt($("#wishlist_product_id").val());
+        let product_name = $("#wishlist_product_name").val();
+        let product_price = parseFloat($("#wishlist_product_price").val());
 
         let data = {
-            "product_id": product_id
+            "product_id": product_id,
+            "product_name": product_name,
+            "product_price": product_price,
         };
 
         $("#flash_message").empty();
+
+        if (product_name == ""){
+            flash_message("Name must be filled out");
+
+            return false;
+        }
 
         let ajax = $.ajax({
                 type: "PUT",
@@ -424,11 +448,13 @@ $(function () {
             table += '<th class="col-md-2">ID</th>'
             table += '<th class="col-md-2">Wishlist ID</th>'
             table += '<th class="col-md-2">Product ID</th>'
+            table += '<th class="col-md-2">Product Name</th>'
+            table += '<th class="col-md-2">Product Price</th>'
             table += '</tr></thead><tbody>'
             let firstItem = "";
             for(let i = 0; i < res.length; i++) {
                 let item = res[i];
-                table +=  `<tr id="row_${i}"><td>${item.id}</td><td>${item.wishlist_id}</td><td>${item.product_id}</td></tr>`;
+                table +=  `<tr id="row_${i}"><td>${item.id}</td><td>${item.wishlist_id}</td><td>${item.product_id}</td><td>${item.product_name}</td><td>${item.product_price}</td></tr>`;
                 if (i == 0) {
                     firstItem = item;
                 }

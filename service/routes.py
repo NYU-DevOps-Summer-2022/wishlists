@@ -417,7 +417,13 @@ class WishlistItemsCollection(Resource):
         item.create()
         message = item.serialize()
 
-        return message, status.HTTP_201_CREATED
+        location_url = api.url_for(
+             WishlistItemsCollection, wishlist_id=item.id, _external=True
+        )
+
+        app.logger.info("Wishlist item with ID [%s] created.", item.id)
+
+        return message, status.HTTP_201_CREATED, {"Location": location_url}
 
 
 ######################################################################

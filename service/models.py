@@ -256,7 +256,7 @@ class Item(db.Model):
             "product_price": self.product_price,
         }
 
-    def deserialize(self, wishlist_id, product_id, product_name, product_price):
+    def deserialize(self, data):
         """
         Deserializes the wishlist from wishlist_id and product_id
 
@@ -266,10 +266,10 @@ class Item(db.Model):
 
         # skipping validations required since we are accepting them as integers in the API endpoint itself,
         # can add later if required
-        self.wishlist_id = wishlist_id
-        self.product_id = product_id
-        self.product_name = product_name
-        self.product_price = product_price
+        self.wishlist_id = data["wishlist_id"]
+        self.product_id = data["product_id"]
+        self.product_name = data["product_name"]
+        self.product_price = data["product_price"]
 
         return self
 

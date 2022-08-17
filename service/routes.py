@@ -48,21 +48,9 @@ def wishlist_index(wishlist_id):
 
     return app.send_static_file("wishlist_index.html")
 
-
-# Dict to hold the data of each item in a wishlist
-# items_fields = {
-#     "id": fields.Integer(required=True, description="The unique assigned"),
-#     "product_id": fields.Integer(
-#         required=True, description="The ID unique to each product"
-#     ),
-#     "wishlist_id": fields.Integer(
-#         required=True, description="The ID unique to each Wishlist"
-#     ),
-# }
-
 # Define the Item model so that the docs reflect what can be sent
-create_model_2 = api.model(
-    "Item",
+create_item = api.model(
+    "CreateItem",
     {
         "product_id": fields.Integer(
             required=True, description="The ID unique to each Product"
@@ -78,20 +66,20 @@ create_model_2 = api.model(
 
 item_model = api.inherit(
     "ItemModel",
-    create_model_2,
+    create_item,
     {
         "id": fields.Integer(
             readOnly=True, description="The unique id assigned internally by service"
         ),
         "wishlist_id": fields.Integer(
-            required=True, description="The ID unique to each Wishlist"
+            required=False, description="The ID unique to each Wishlist"
         ),
     },
 )
 
 # Define the model so that the docs reflect what can be sent
-create_model = api.model(
-    "Wishlist",
+create_wishlist = api.model(
+    "CreateWishlist",
     {
         "name": fields.String(required=True, description="The name of the Wishlist"),
         "customer_id": fields.Integer(
@@ -109,28 +97,7 @@ create_model = api.model(
 
 wishlist_model = api.inherit(
     "WishlistModel",
-    create_model,
-    {
-        "id": fields.Integer(
-            readOnly=True, description="The unique id assigned internally by service"
-        ),
-    },
-)
-
-
-create_model_3 = api.model(
-    "Simple_Wishlist",
-    {
-        "name": fields.String(required=True, description="The name of the Wishlist"),
-        "customer_id": fields.Integer(
-            required=True, description="The ID unique to each customer"
-        ),
-    },
-)
-
-simple_wishlist_model = api.inherit(
-    "Simple_Wishlist_Model",
-    create_model_3,
+    create_wishlist,
     {
         "id": fields.Integer(
             readOnly=True, description="The unique id assigned internally by service"
@@ -419,7 +386,7 @@ class WishlistItemsCollection(Resource):
     # ---------------------------------------------------------------------
     @api.doc("create_wishlist_items")
     @api.response(400, "The posted data was not valid")
-    @api.expect(create_model_2, validate=True)
+    @api.expect(create_item, validate=True)
     @api.marshal_with(item_model, code=201)
     def post(self, wishlist_id):
         """
@@ -431,16 +398,15 @@ class WishlistItemsCollection(Resource):
         check_content_type("application/json")
 
         req = api.payload
+        req["wishlist_id"] = wishlist_id
 
-        # TODO : validate param
-        product_id = req["product_id"]
-        product_name = req["product_name"]
-        product_price = req["product_price"]
+        item = Item()
+        item.deserialize(req)
 
         # check for existence
         Wishlist.find_or_404(wishlist_id)
 
-        items = Item.find_by_wishlist_id_and_product_id(wishlist_id, product_id)
+        items = Item.find_by_wishlist_id_and_product_id(wishlist_id, item.product_id)
         results = [item.serialize() for item in items]
 
         if len(results) != 0:
@@ -448,8 +414,6 @@ class WishlistItemsCollection(Resource):
             message = results[0]
             return message, status.HTTP_200_OK
 
-        item = Item()
-        item.deserialize(wishlist_id, product_id, product_name, product_price)
         item.create()
         message = item.serialize()
 
@@ -504,7 +468,7 @@ class WishlistItemResource(Resource):
     @api.doc("update_wishlist_items")
     @api.response(404, "Item not found")
     @api.response(400, "The posted Item data was not valid")
-    @api.expect(create_model_2, validate=True)
+    @api.expect(create_item, validate=True)
     @api.marshal_with(item_model)
     def put(self, wishlist_id, item_id):
         """
@@ -515,11 +479,7 @@ class WishlistItemResource(Resource):
         check_content_type("application/json")
 
         req = api.payload
-
-        # TODO : validate param
-        product_id = req["product_id"]
-        product_name = req["product_name"]
-        product_price = req["product_price"]
+        req["wishlist_id"] = wishlist_id
 
         app.logger.info(
             "Request for wishlists with wishlist_id id: %s and item_id: %s",
@@ -535,7 +495,7 @@ class WishlistItemResource(Resource):
         message = ""
 
         results = [
-            item.deserialize(wishlist_id, product_id, product_name, product_price)
+            item.deserialize(req)
             for item in items
         ]
 

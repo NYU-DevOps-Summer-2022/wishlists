@@ -47,7 +47,7 @@
                 <script>
                     var full_url = document.URL; // Get current url
                     var url_array = full_url.split('/') // Split the string into an array with / as separator
-                    var last_segment = url_array[url_array.length-2];  // Get the last part of the array (-1)
+                    var last_segment = url_array[url_array.length-1];  // Get the last part of the array (-1)
                     document.getElementById("wishlist_id").value = last_segment;
 
                     function myFunction() {
@@ -56,7 +56,7 @@
                         var url_array = full_url.split('/wishlists')
                         var base_url = url_array[0]
                         var remaining = url_array[1].split('/')
-                        var new_url = base_url + "/wishlists/" + val + "/" +remaining[2];
+                        var new_url = base_url + "/wishlists/" + val;
                         location.href = new_url;
                       }
                 </script>

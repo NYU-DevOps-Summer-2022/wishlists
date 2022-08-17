@@ -528,7 +528,7 @@ class WishlistItemResource(Resource):
         This endpoint will delete a Product based on the product id
         """
         app.logger.info(
-            "Request to delete Product %s for Wishlist id: %s", (item_id, wishlist_id)
+            "Request to delete Product %s for Wishlist id: %s", item_id, wishlist_id
         )
 
         item = Item.find_by_wishlist_id_and_item_id(wishlist_id, item_id)

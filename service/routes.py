@@ -321,6 +321,7 @@ class ClearResource(Resource):
 
     @api.doc("clear_wishlist")
     @api.response(404, "Wishlist not found")
+    @api.marshal_with(wishlist_model, code=200)
     def put(self, wishlist_id):
         """
         Clear a Wishlist
@@ -360,7 +361,7 @@ class WishlistItemsCollection(Resource):
     # RETRIEVE A WISHLIST'S ITEMS
     # ---------------------------------------------------------------------
     @api.doc("list_wishlists_items")
-    @api.expect(wishlist_args, validate=True)
+    @api.response(404, "Wishlist not found")
     @api.marshal_list_with(item_model)
     def get(self, wishlist_id):
         """

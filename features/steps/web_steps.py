@@ -206,6 +206,6 @@ def step_impl(context, row_number):
     # switch to browser tab
     context.driver.switch_to.window(chld)
 
-    context.wishlist_id = context.driver.current_url.split("/")[-2]
+    context.wishlist_id = context.driver.current_url.split("/")[-1]
     context.parent_window = parent
     context.child_window = chld

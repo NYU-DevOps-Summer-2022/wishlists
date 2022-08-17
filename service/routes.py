@@ -25,7 +25,7 @@ def health():
 
 
 ######################################################################
-# GET INDEX
+# GET INDEX VIEW
 ######################################################################
 @app.route("/")
 def index():
@@ -35,9 +35,9 @@ def index():
 
 
 ######################################################################
-# GET WISHLIST INDEX (ITEMS)
+# GET WISHLIST INDEX (ITEMS) VIEW
 ######################################################################
-@app.route("/wishlists/<int:wishlist_id>/view")
+@app.route("/wishlists/<int:wishlist_id>")
 def wishlist_index(wishlist_id):
     """Root URL response"""
     app.logger.info("Request for wishlist %s view", wishlist_id)

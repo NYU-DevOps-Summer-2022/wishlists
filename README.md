@@ -10,29 +10,39 @@
 
 In this project, we have created a wishlist resource as a part of an e-commerce website for the final project of the DevOps class at NYU taught by Professor John Rofrano for the Summer of 2022. We utilized the base code provided in https://github.com/nyu-devops/ across the various repositories. The members of the project are:
 
-Aashiq Mohamed baig, Anugya Shah, MD Shahedur Rahman, Namratha Vempaty Neeraj Kanuri
+Aashiq Mohamed baig, Anugya Shah, MD Shahedur Rahman, Namratha Vempaty and Neeraj Kanuri
 
 To run the all the test cases locally, please use the command "nosetests". 
 
-## Calls to the Wishlist
+## Running the wishlist service
+
+- Run tests: `make test`
+- Start server: `make run`
+
+## Wishlist Service APIs
 
 These are the available REST API calls which are used for Wishlist.
 
 | Endpoint                 | Methods     | Rule                                                   |
 | ------------------------ | ----------- | ------------------------------------------------------ |
 | index                    | GET         | /                                                      |
-| health                   | GET         | /health                                                |
-| list_wishlists           | GET         | /wishlists                                             |
-| create_wishlists         | POST        | /wishlists                                             |
-| get_wishlists            | GET         | /wishlists/<int:wishlist_id>                           |
-| update_wishlist_name     | PUT         | /wishlists/<int:wishlist_id>                           |
-| delete_wishlists         | DELETE      | /wishlists/<int:wishlist_id>                           |
-| clear_wishlist           | PUT         | /wishlists/<int:wishlist_id>/clear                     |
-| get_wishlist_items       | GET         | /wishlists/<int:wishlist_id>/items                     |
-| create_wishlist_items    | POST        | /wishlists/<int:wishlist_id>/items                     |
-| get_wishlist_item        | GET         | /wishlists/<int:wishlist_id>/items/<int:item_id>       |
-| update_wishlist_items    | PUT         | /wishlists/<int:wishlist_id>/items/<int:item_id>       |
-| delete_wishlist_item     | DELETE      | /wishlists/<int:wishlist_id>/items/<int:item_id>       |
+| health                   | GET         | /health                                                 |
+| wishlist_items_view      | GET         | /wishlists/<int:wishlist_id>                                      |
+| list_wishlists           | GET         | /api/wishlists                                              |
+| create_wishlists         | POST        | /api/wishlists                                              |
+| get_wishlists            | GET         | /api/wishlists/<int:wishlist_id>                        |
+| update_wishlist_name     | PUT         | /api/wishlists/<int:wishlist_id>                        |
+| delete_wishlists         | DELETE      | /api/wishlists/<int:wishlist_id>                        |
+| clear_wishlist           | PUT         | /api/wishlists/<int:wishlist_id>/clear                      |
+| get_wishlist_items       | GET         | /api/wishlists/<int:wishlist_id>/items                      |
+| create_wishlist_items    | POST        | /api/wishlists/<int:wishlist_id>/items                      |
+| get_wishlist_item        | GET         | /api/wishlists/<int:wishlist_id>/items/<int:item_id>              |
+| update_wishlist_items    | PUT         | /api/wishlists/<int:wishlist_id>/items/<int:item_id>              |
+| delete_wishlist_item     | DELETE      | /api/wishlists/<int:wishlist_id>/items/<int:item_id>              |
+
+## Data model
+
+![Data Model](data_model.png?raw=true "Data Model")
 
 ## Contents
 

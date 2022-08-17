@@ -48,6 +48,7 @@ def wishlist_index(wishlist_id):
 
     return app.send_static_file("wishlist_index.html")
 
+
 # Define the Item model so that the docs reflect what can be sent
 create_item = api.model(
     "CreateItem",
@@ -418,7 +419,7 @@ class WishlistItemsCollection(Resource):
         message = item.serialize()
 
         location_url = api.url_for(
-             WishlistItemsCollection, wishlist_id=item.id, _external=True
+            WishlistItemsCollection, wishlist_id=item.id, _external=True
         )
 
         app.logger.info("Wishlist item with ID [%s] created.", item.id)
@@ -500,10 +501,7 @@ class WishlistItemResource(Resource):
 
         message = ""
 
-        results = [
-            item.deserialize(req)
-            for item in items
-        ]
+        results = [item.deserialize(req) for item in items]
 
         if len(results) > 0:
             item = results[0]

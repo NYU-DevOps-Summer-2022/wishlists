@@ -40,6 +40,10 @@ These are the available REST API calls which are used for Wishlist.
 | update_wishlist_items    | PUT         | /api/wishlists/<int:wishlist_id>/items/<int:item_id>              |
 | delete_wishlist_item     | DELETE      | /api/wishlists/<int:wishlist_id>/items/<int:item_id>              |
 
+## Data model
+
+![Data Model](data_model.png?raw=true "Data Model")
+
 ## Contents
 
 The project contains the following:

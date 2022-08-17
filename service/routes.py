@@ -86,13 +86,6 @@ create_wishlist = api.model(
         "customer_id": fields.Integer(
             required=True, description="The ID unique to each customer"
         ),
-        "items": fields.List(
-            fields.Nested(
-                item_model,
-                required=False,
-                description="Nested dictionary to access the items schema",
-            ),
-        ),
     },
 )
 
@@ -102,6 +95,13 @@ wishlist_model = api.inherit(
     {
         "id": fields.Integer(
             readOnly=True, description="The unique id assigned internally by service"
+        ),
+        "items": fields.List(
+            fields.Nested(
+                item_model,
+                required=False,
+                description="Nested dictionary to access the items schema",
+            ),
         ),
     },
 )
@@ -171,7 +171,7 @@ class WishlistResource(Resource):
     @api.doc("update_wishlists")
     @api.response(404, "Wishlist not found")
     @api.response(400, "The posted wishlist data was not valid")
-    @api.expect(wishlist_model, validate=True)
+    @api.expect(create_wishlist, validate=True)
     @api.marshal_with(wishlist_model)
     def put(self, wishlist_id):
         """
@@ -289,7 +289,7 @@ class WishlistCollection(Resource):
     # ---------------------------------------------------------------------
     @api.doc("create_wishlists")
     @api.response(400, "The posted data was not valid")
-    @api.expect(wishlist_model, validate=True)
+    @api.expect(create_wishlist, validate=True)
     @api.marshal_with(wishlist_model, code=201)
     def post(self):
         """

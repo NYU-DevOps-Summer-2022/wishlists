@@ -6,7 +6,7 @@ All of the models are stored in this module
 import logging
 from flask_sqlalchemy import SQLAlchemy
 
-logger = logging.getLogger("flask.app")
+logger = logging.getLogger("service.app")
 
 # Create the SQLAlchemy object to be initialized later in init_db()
 db = SQLAlchemy()
@@ -62,7 +62,7 @@ class Wishlist(db.Model):
 
     def delete(self):
         """Removes a Wishlist from the data store"""
-        logger.info("Deleting %s", self.name)
+        logger.info("Deleting wishlist %s", self.name)
         db.session.delete(self)
         db.session.commit()
 
@@ -191,6 +191,8 @@ class Item(db.Model):
     Class that represents a Wishlist item
     """
 
+    app = None
+
     # Table Schema
     id = db.Column(db.Integer, primary_key=True)
     wishlist_id = db.Column(
@@ -242,7 +244,7 @@ class Item(db.Model):
 
     def delete(self):
         """Removes a Wishlist item from the data store"""
-        logger.info("Deleting %s", self.id)
+        logger.info("Deleting item %s", self.id)
         db.session.delete(self)
         db.session.commit()
 

@@ -6,7 +6,7 @@ All of the models are stored in this module
 import logging
 from flask_sqlalchemy import SQLAlchemy
 
-logger = logging.getLogger("flask.app")
+logger = logging.getLogger("service.app")
 
 # Create the SQLAlchemy object to be initialized later in init_db()
 db = SQLAlchemy()
@@ -190,6 +190,8 @@ class Item(db.Model):
     """
     Class that represents a Wishlist item
     """
+
+    app = None
 
     # Table Schema
     id = db.Column(db.Integer, primary_key=True)

@@ -532,8 +532,8 @@ class WishlistItemResource(Resource):
             "Request to delete Product %s for Wishlist id: %s", item_id, wishlist_id
         )
 
-        item = Item.find_by_wishlist_id_and_item_id(wishlist_id, item_id)
-        if item:
+        items = Item.find_by_wishlist_id_and_item_id(wishlist_id, item_id)
+        for item in items:
             item.delete()
 
         return make_response("", status.HTTP_204_NO_CONTENT)

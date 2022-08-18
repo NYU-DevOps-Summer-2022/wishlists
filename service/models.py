@@ -62,7 +62,7 @@ class Wishlist(db.Model):
 
     def delete(self):
         """Removes a Wishlist from the data store"""
-        logger.info("Deleting %s", self.name)
+        logger.info("Deleting wishlist %s", self.name)
         db.session.delete(self)
         db.session.commit()
 
@@ -244,7 +244,7 @@ class Item(db.Model):
 
     def delete(self):
         """Removes a Wishlist item from the data store"""
-        logger.info("Deleting %s", self.id)
+        logger.info("Deleting item %s", self.id)
         db.session.delete(self)
         db.session.commit()
 

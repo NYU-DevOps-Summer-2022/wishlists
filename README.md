@@ -1,6 +1,7 @@
 # Wishlists
 
-[![Build Status](https://github.com/NYU-DevOps-Summer-2022/wishlists/actions/workflows/ci.yml/badge.svg)](https://github.com/NYU-DevOps-Summer-2022/wishlists/actions)
+[![Build Status](https://github.com/NYU-DevOps-Summer-2022/wishlists/actions/workflows/tdd.yml/badge.svg)](https://github.com/NYU-DevOps-Summer-2022/wishlists/actions)
+[![Build Status](https://github.com/NYU-DevOps-Summer-2022/wishlists/actions/workflows/bdd.yml/badge.svg)](https://github.com/NYU-DevOps-Summer-2022/wishlists/actions)
 [![codecov](https://codecov.io/gh/NYU-DevOps-Summer-2022/wishlists/branch/master/graph/badge.svg?token=ZQI6MNHOPK)](https://codecov.io/gh/NYU-DevOps-Summer-2022/wishlists)
 
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
